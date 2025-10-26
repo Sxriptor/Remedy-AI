@@ -1,11 +1,11 @@
 <div align="center">
 
-<img src="./resources/icon.png" width="144"/>
+<img src="./resources/icon.png" width="144" alt="Remedy Logo"/>
 
   <h1 align="center">Remedy</h1>
 
   <p align="center">
-    <strong>Remedy is an open-source gaming platform created to be the single tool that you need in order to manage your gaming library. Remedy is written in Node.js (Electron, React, Typescript) and Python.</strong>
+    <strong>Remedy is an open-source productivity platform designed to help you discover, install, and manage development tools and productivity apps. Built with Electron, React, and TypeScript.</strong>
   </p>
 
 ![Remedy Home Page](./docs/screenshot.png)
@@ -14,12 +14,12 @@
 
 ## Features
 
-- Add games that you own to your library
-- Have a nice profile that shows what you are playing to your friends
-- Save your game progress in the cloud
-- Unlock achievements
-- Navigate through a rich catalogue with a powerful suggestion algorithm
-- Discover new games that you haven't played before
+- Manage your productivity apps and development tools in one place
+- Share your setup with friends and colleagues
+- Cloud sync for app configurations (coming soon)
+- Track achievements and milestones
+- Discover new tools with intelligent recommendations
+- Seamlessly download and install apps
 
 ## Build from source and contributing
 

@@ -272,6 +272,13 @@ declare global {
     openExternal: (src: string) => Promise<void>;
     getVersion: () => Promise<string>;
     isStaging: () => Promise<boolean>;
+  
+  // Supabase Auth
+  signInWithGitHub: () => Promise<{ success: boolean; error?: string }>;
+  handleSupabaseCallback: (hash: string) => Promise<{ success: boolean; error?: string; user?: any }>;
+  getSupabaseSession: () => Promise<any>;
+  supabaseSignOut: () => Promise<{ success: boolean; error?: string }>;
+  onSupabaseAuthSuccess: (callback: (data: any) => void) => () => void;
     ping: () => string;
     getDefaultDownloadsPath: () => Promise<string>;
     isPortableVersion: () => Promise<boolean>;
@@ -319,6 +326,12 @@ declare global {
     onSignIn: (cb: () => void) => () => Electron.IpcRenderer;
     onAccountUpdated: (cb: () => void) => () => Electron.IpcRenderer;
     onSignOut: (cb: () => void) => () => Electron.IpcRenderer;
+    
+    /* Supabase Auth */
+    signInWithGitHub: () => Promise<{ success: boolean; error?: string }>;
+    getSupabaseSession: () => Promise<{ user: any; session: any } | null>;
+    handleSupabaseCallback: (hash: string) => Promise<{ success: boolean; error?: string }>;
+    onSupabaseAuthSuccess: (cb: () => void) => () => Electron.IpcRenderer;
 
     /* User */
     getComparedUnlockedAchievements: (

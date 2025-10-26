@@ -9,13 +9,13 @@ import {
   RealDebridClient,
   Aria2,
   DownloadManager,
-  HydraApi,
   uploadGamesBatch,
   startMainLoop,
   Ludusavi,
   Lock,
   DeckyPlugin,
   ResourceCache,
+  initializeSupabase,
 } from "@main/services";
 
 export const loadState = async () => {
@@ -52,11 +52,8 @@ export const loadState = async () => {
     DeckyPlugin.checkAndUpdateIfOutdated();
   }
 
-  // Setup API client (configure your own backend endpoints)
-  const { logger } = await import("@main/services");
-  await HydraApi.setupApi().catch((err) => {
-    logger.error("Failed to setup API client:", err);
-  });
+  // Initialize Supabase
+  initializeSupabase();
 
   uploadGamesBatch();
 

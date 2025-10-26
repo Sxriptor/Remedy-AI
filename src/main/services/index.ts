@@ -6,6 +6,7 @@ export * from "./download";
 export * from "./process-watcher";
 export * from "./main-loop";
 export * from "./api-client";
+export * from "./supabase-client";
 export * from "./ludusavi";
 export * from "./cloud-sync";
 export * from "./7zip";

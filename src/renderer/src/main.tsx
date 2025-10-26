@@ -30,6 +30,8 @@ import Profile from "./pages/profile/profile";
 import Achievements from "./pages/achievements/achievements";
 import ThemeEditor from "./pages/theme-editor/theme-editor";
 import { AchievementNotification } from "./pages/achievements/notification/achievement-notification";
+import Login from "./pages/auth/login";
+import AuthCallback from "./pages/auth/callback";
 
 console.log = logger.log;
 
@@ -71,6 +73,8 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
             <Route path="/achievements" element={<Achievements />} />
           </Route>
 
+          <Route path="/login" element={<Login />} />
+          <Route path="/auth/callback" element={<AuthCallback />} />
           <Route path="/theme-editor" element={<ThemeEditor />} />
           <Route
             path="/achievement-notification"
