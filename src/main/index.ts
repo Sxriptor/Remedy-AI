@@ -10,6 +10,7 @@ import {
   WindowManager,
   Lock,
   Aria2,
+  authManager,
 } from "@main/services";
 import resources from "@locales";
 // Python RPC removed - no longer needed
@@ -203,8 +204,8 @@ app.on("second-instance", (_event, commandLine) => {
   handleDeepLinkPath(commandLine.pop());
 });
 
-app.on("open-url", (_event, url) => {
-  handleDeepLinkPath(url);
+app.on("open-url", (_event, urlString) => {
+  handleDeepLinkPath(urlString);
 });
 
 // Quit when all windows are closed, except on macOS. There, it's common
@@ -223,6 +224,7 @@ app.on("before-quit", async (e) => {
     e.preventDefault();
     /* Python RPC removed */
     Aria2.kill();
+    authManager.cleanup();
     await clearGamesPlaytime();
     canAppBeClosed = true;
     app.quit();

@@ -80,8 +80,12 @@ export function App() {
         const session = await window.electron.getSupabaseSession();
         const authenticated = !!session?.user;
         setIsAuthenticated(authenticated);
-        
-        if (!authenticated && !location.pathname.startsWith("/auth") && location.pathname !== "/login") {
+
+        if (
+          !authenticated &&
+          !location.pathname.startsWith("/auth") &&
+          location.pathname !== "/login"
+        ) {
           navigate("/login");
         }
       } catch (err) {
@@ -109,7 +113,7 @@ export function App() {
   useEffect(() => {
     // Only load preferences if authenticated
     if (!isAuthenticated) return;
-    
+
     Promise.all([window.electron.getUserPreferences(), updateLibrary()]).then(
       ([preferences]) => {
         dispatch(setUserPreferences(preferences));
@@ -146,11 +150,11 @@ export function App() {
   useEffect(() => {
     // Only fetch user details if authenticated
     if (!isAuthenticated) return;
-    
+
     const cachedUserDetails = window.localStorage.getItem("userDetails");
 
     if (cachedUserDetails) {
-      const { profileBackground, ...userDetails} =
+      const { profileBackground, ...userDetails } =
         JSON.parse(cachedUserDetails);
 
       dispatch(setUserDetails(userDetails));
@@ -313,26 +317,32 @@ export function App() {
   // Show loading spinner while checking auth
   if (checkingAuth) {
     return (
-      <div style={{
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "center",
-        minHeight: "100vh",
-        background: "linear-gradient(135deg, #1c1c1c 0%, #2d2d2d 100%)",
-      }}>
-        <div style={{
-          textAlign: "center",
-          color: "#fff"
-        }}>
-          <div style={{
-            width: "48px",
-            height: "48px",
-            margin: "0 auto 1rem",
-            border: "4px solid rgba(255, 255, 255, 0.1)",
-            borderTopColor: "#fff",
-            borderRadius: "50%",
-            animation: "spin 0.8s linear infinite"
-          }} />
+      <div
+        style={{
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          minHeight: "100vh",
+          background: "linear-gradient(135deg, #1c1c1c 0%, #2d2d2d 100%)",
+        }}
+      >
+        <div
+          style={{
+            textAlign: "center",
+            color: "#fff",
+          }}
+        >
+          <div
+            style={{
+              width: "48px",
+              height: "48px",
+              margin: "0 auto 1rem",
+              border: "4px solid rgba(255, 255, 255, 0.1)",
+              borderTopColor: "#fff",
+              borderRadius: "50%",
+              animation: "spin 0.8s linear infinite",
+            }}
+          />
           <p>Loading Remedy...</p>
         </div>
       </div>
@@ -340,7 +350,11 @@ export function App() {
   }
 
   // Don't show main app if not authenticated
-  if (!isAuthenticated && !location.pathname.startsWith("/auth") && location.pathname !== "/login") {
+  if (
+    !isAuthenticated &&
+    !location.pathname.startsWith("/auth") &&
+    location.pathname !== "/login"
+  ) {
     return null;
   }
 
