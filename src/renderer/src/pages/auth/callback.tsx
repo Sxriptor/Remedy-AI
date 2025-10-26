@@ -33,9 +33,9 @@ export default function AuthCallback() {
         } else {
           throw new Error(result.error || "Authentication failed");
         }
-      } catch (err: any) {
+      } catch (err) {
         console.error("Auth callback error:", err);
-        setError(err.message || "Authentication failed");
+        setError(err instanceof Error ? err.message : "Authentication failed");
         setStatus("error");
 
         // Redirect to login after showing error
@@ -63,7 +63,7 @@ export default function AuthCallback() {
           <>
             <div className="success-icon">✓</div>
             <h2>Success!</h2>
-            <p>You're now signed in. Redirecting to Remedy...</p>
+            <p>You&apos;re now signed in. Redirecting to Remedy...</p>
           </>
         )}
 

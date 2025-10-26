@@ -37,7 +37,7 @@ class AuthManager {
       this.callbackServer = http.createServer(async (req, res) => {
         try {
           const url = new URL(req.url || "", `http://localhost:${port}`);
-          
+
           if (url.pathname === "/auth/callback") {
             const accessToken = url.searchParams.get("token");
             const refreshToken = url.searchParams.get("refresh_token");
@@ -97,7 +97,7 @@ class AuthManager {
             }
 
             logger.info("Received tokens, setting session...");
-            
+
             // Set session with both tokens
             const { data, error } = await SupabaseClient.setSession({
               access_token: accessToken,
@@ -209,24 +209,27 @@ class AuthManager {
     try {
       // Find an open port
       const port = await this.findOpenPort(8080, 8090);
-      
+
       // Start callback server
       await this.startCallbackServer(port);
-      
+
       // Build redirect URI
       const redirectUri = `http://localhost:${port}/auth/callback`;
-      
+
       // Open browser with redirect_uri parameter
       const authUrl = `https://colabify.xyz/login?source=ide&redirect_uri=${encodeURIComponent(redirectUri)}`;
-      
+
       logger.info(`Opening auth URL: ${authUrl}`);
       await shell.openExternal(authUrl);
-      
+
       return { success: true };
     } catch (err: any) {
       logger.error("Error starting sign-in:", err);
       this.stopCallbackServer();
-      return { success: false, error: err.message || "Failed to start sign-in" };
+      return {
+        success: false,
+        error: err.message || "Failed to start sign-in",
+      };
     }
   }
 
@@ -239,4 +242,3 @@ class AuthManager {
 }
 
 export const authManager = new AuthManager();
-
