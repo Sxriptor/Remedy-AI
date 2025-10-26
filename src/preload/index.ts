@@ -438,7 +438,7 @@ contextBridge.exposeInMainWorld("electron", {
     ipcRenderer.on("on-signout", listener);
     return () => ipcRenderer.removeListener("on-signout", listener);
   },
-  
+
   /* Supabase Auth */
   signInWithGitHub: () => ipcRenderer.invoke("signInWithGitHub"),
   getSupabaseSession: () => ipcRenderer.invoke("getSupabaseSession"),
@@ -447,7 +447,8 @@ contextBridge.exposeInMainWorld("electron", {
   onSupabaseAuthSuccess: (cb: () => void) => {
     const listener = (_event: Electron.IpcRendererEvent) => cb();
     ipcRenderer.on("on-supabase-auth-success", listener);
-    return () => ipcRenderer.removeListener("on-supabase-auth-success", listener);
+    return () =>
+      ipcRenderer.removeListener("on-supabase-auth-success", listener);
   },
 
   /* Notifications */

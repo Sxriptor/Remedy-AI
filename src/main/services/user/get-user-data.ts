@@ -6,7 +6,7 @@ import { levelKeys } from "@main/level/sublevels";
 export const getUserData = async () => {
   // API calls removed - returning local user data only
   // TODO: Implement Supabase user profile fetching if needed
-  
+
   try {
     const loggedUser = await db.get<string, User>(levelKeys.user, {
       valueEncoding: "json",

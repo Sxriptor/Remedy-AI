@@ -1,7 +1,10 @@
 import { registerEvent } from "../register-event";
 import { SupabaseClient, WindowManager } from "@main/services";
 
-const handleSupabaseCallback = async (_event: Electron.IpcMainInvokeEvent, hash: string) => {
+const handleSupabaseCallback = async (
+  _event: Electron.IpcMainInvokeEvent,
+  hash: string
+) => {
   try {
     console.log("Handling Supabase callback with hash");
 
@@ -40,9 +43,11 @@ const handleSupabaseCallback = async (_event: Electron.IpcMainInvokeEvent, hash:
     return { success: true };
   } catch (err: any) {
     console.error("Callback handling error:", err);
-    return { success: false, error: err.message || "Failed to handle callback" };
+    return {
+      success: false,
+      error: err.message || "Failed to handle callback",
+    };
   }
 };
 
 registerEvent("handleSupabaseCallback", handleSupabaseCallback);
-

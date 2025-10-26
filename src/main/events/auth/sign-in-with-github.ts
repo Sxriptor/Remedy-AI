@@ -8,7 +8,7 @@ const signInWithGitHub = async () => {
     const { data, error } = await SupabaseClient.signInWithOAuth({
       provider: "github",
       options: {
-        redirectTo: `${process.env.VITE_SUPABASE_REDIRECT_URL || "http://localhost:3000"}/auth/callback`,
+        redirectTo: `${process.env.MAIN_VITE_SUPABASE_REDIRECT_URL || "http://localhost:3000"}/auth/callback`,
         skipBrowserRedirect: true, // Don't redirect automatically, we'll open in external browser
       },
     });
@@ -29,9 +29,11 @@ const signInWithGitHub = async () => {
     return { success: true };
   } catch (err: any) {
     console.error("Sign in error:", err);
-    return { success: false, error: err.message || "Failed to initiate sign-in" };
+    return {
+      success: false,
+      error: err.message || "Failed to initiate sign-in",
+    };
   }
 };
 
 registerEvent("signInWithGitHub", signInWithGitHub);
-

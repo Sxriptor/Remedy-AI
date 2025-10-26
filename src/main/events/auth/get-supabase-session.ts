@@ -10,10 +10,12 @@ const getSupabaseSession = async () => {
       return null;
     }
 
-    return data?.session ? {
-      user: data.session.user,
-      session: data.session,
-    } : null;
+    return data?.session
+      ? {
+          user: data.session.user,
+          session: data.session,
+        }
+      : null;
   } catch (err: any) {
     console.error("Get session error:", err);
     return null;
@@ -21,4 +23,3 @@ const getSupabaseSession = async () => {
 };
 
 registerEvent("getSupabaseSession", getSupabaseSession);
-

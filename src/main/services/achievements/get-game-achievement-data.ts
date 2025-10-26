@@ -8,7 +8,7 @@ export const getGameAchievementData = async (
 ) => {
   // API calls removed - returning cached achievements only
   // TODO: Implement your own achievement data source if needed
-  
+
   const gameKey = levelKeys.game(shop, objectId);
   const cachedAchievements = await gameAchievementsSublevel.get(gameKey);
 

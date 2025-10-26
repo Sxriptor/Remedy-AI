@@ -9,7 +9,7 @@ import react from "@vitejs/plugin-react";
 import svgr from "vite-plugin-svgr";
 
 export default defineConfig(({ mode }) => {
-  loadEnv(mode);
+  const env = loadEnv(mode);
 
   return {
     main: {
@@ -23,6 +23,11 @@ export default defineConfig(({ mode }) => {
           "@resources": resolve("resources"),
           "@shared": resolve("src/shared"),
         },
+      },
+      define: {
+        'process.env.MAIN_VITE_SUPABASE_URL': JSON.stringify(env.MAIN_VITE_SUPABASE_URL),
+        'process.env.MAIN_VITE_SUPABASE_ANON_KEY': JSON.stringify(env.MAIN_VITE_SUPABASE_ANON_KEY),
+        'process.env.MAIN_VITE_SUPABASE_REDIRECT_URL': JSON.stringify(env.MAIN_VITE_SUPABASE_REDIRECT_URL),
       },
       plugins: [externalizeDepsPlugin(), swcPlugin()],
     },

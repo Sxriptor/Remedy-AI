@@ -56,9 +56,7 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en">
       <body>
-        <AuthProvider>
-          {children}
-        </AuthProvider>
+        <AuthProvider>{children}</AuthProvider>
       </body>
     </html>
   );
@@ -72,21 +70,21 @@ Copy `middleware.ts` to your project root (same level as `app/` folder).
 ## 6. Usage in Components
 
 ```tsx
-import { useAuth } from '@/lib/auth/context'
+import { useAuth } from "@/lib/auth/context";
 
 function MyComponent() {
-  const { user, customUser, loading, signOut } = useAuth()
-  
-  if (loading) return <div>Loading...</div>
-  
-  if (!user) return <div>Please sign in</div>
-  
+  const { user, customUser, loading, signOut } = useAuth();
+
+  if (loading) return <div>Loading...</div>;
+
+  if (!user) return <div>Please sign in</div>;
+
   return (
     <div>
       <p>Welcome, {customUser?.name || user.email}!</p>
       <button onClick={signOut}>Sign Out</button>
     </div>
-  )
+  );
 }
 ```
 
@@ -109,15 +107,18 @@ Make sure your Electron main process handles the custom protocol and IPC events 
 ## 9. Customization
 
 ### Styling
+
 - Update CSS classes in form components
 - Modify the layout and design to match your app
 
 ### Branding
+
 - Change app name in page titles and descriptions
 - Update OAuth redirect URLs
 - Modify success/error messages
 
 ### Additional User Fields
+
 - Add more fields to the `users` table
 - Update the `CustomUser` type in `context.tsx`
 - Modify `user-management.ts` to handle new fields

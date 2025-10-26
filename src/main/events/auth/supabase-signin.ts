@@ -54,7 +54,10 @@ const signInWithGitHub = async () => {
  * Handle the OAuth callback from the browser
  * Extracts tokens from the URL and sets the session
  */
-const handleSupabaseCallback = async (_event: Electron.IpcMainInvokeEvent, hash: string) => {
+const handleSupabaseCallback = async (
+  _event: Electron.IpcMainInvokeEvent,
+  hash: string
+) => {
   try {
     logger.info("Handling Supabase OAuth callback");
 
@@ -163,4 +166,3 @@ registerEvent("supabaseSignOut", supabaseSignOut);
 ipcMain.on("supabase-auth-success", () => {
   logger.info("Auth success event acknowledged");
 });
-

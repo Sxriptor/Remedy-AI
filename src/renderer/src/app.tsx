@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import achievementSound from "@renderer/assets/audio/achievement.wav";
 import { Sidebar, BottomPanel, Header, Toast } from "@renderer/components";
 
@@ -36,6 +36,10 @@ export interface AppProps {
 
 export function App() {
   const contentRef = useRef<HTMLDivElement>(null);
+  const [isAuthenticated, setIsAuthenticated] = useState<boolean | null>(null);
+  const [checkingAuth, setCheckingAuth] = useState(true);
+  const navigate = useNavigate();
+  const location = useLocation();
   const { updateLibrary, library } = useLibrary();
 
   const { t } = useTranslation("app");
@@ -61,9 +65,6 @@ export function App() {
 
   const dispatch = useAppDispatch();
 
-  const navigate = useNavigate();
-  const location = useLocation();
-
   const draggingDisabled = useAppSelector(
     (state) => state.window.draggingDisabled
   );
@@ -72,13 +73,49 @@ export function App() {
 
   const { showSuccessToast } = useToast();
 
+  // Check authentication on mount
   useEffect(() => {
+    const checkAuth = async () => {
+      try {
+        const session = await window.electron.getSupabaseSession();
+        const authenticated = !!session?.user;
+        setIsAuthenticated(authenticated);
+        
+        if (!authenticated && !location.pathname.startsWith("/auth") && location.pathname !== "/login") {
+          navigate("/login");
+        }
+      } catch (err) {
+        console.error("Error checking auth:", err);
+        setIsAuthenticated(false);
+        navigate("/login");
+      } finally {
+        setCheckingAuth(false);
+      }
+    };
+
+    checkAuth();
+  }, [navigate, location.pathname]);
+
+  // Listen for Supabase auth success
+  useEffect(() => {
+    const unsubscribe = window.electron.onSupabaseAuthSuccess(() => {
+      setIsAuthenticated(true);
+      navigate("/");
+    });
+
+    return () => unsubscribe();
+  }, [navigate]);
+
+  useEffect(() => {
+    // Only load preferences if authenticated
+    if (!isAuthenticated) return;
+    
     Promise.all([window.electron.getUserPreferences(), updateLibrary()]).then(
       ([preferences]) => {
         dispatch(setUserPreferences(preferences));
       }
     );
-  }, [navigate, location.pathname, dispatch, updateLibrary]);
+  }, [navigate, location.pathname, dispatch, updateLibrary, isAuthenticated]);
 
   useEffect(() => {
     const unsubscribe = window.electron.onDownloadProgress(
@@ -107,10 +144,13 @@ export function App() {
   }, [updateLibrary]);
 
   useEffect(() => {
+    // Only fetch user details if authenticated
+    if (!isAuthenticated) return;
+    
     const cachedUserDetails = window.localStorage.getItem("userDetails");
 
     if (cachedUserDetails) {
-      const { profileBackground, ...userDetails } =
+      const { profileBackground, ...userDetails} =
         JSON.parse(cachedUserDetails);
 
       dispatch(setUserDetails(userDetails));
@@ -132,7 +172,7 @@ export function App() {
         $script.src = `${import.meta.env.RENDERER_VITE_EXTERNAL_RESOURCES_URL}/bundle.js?t=${Date.now()}`;
         document.head.appendChild($script);
       });
-  }, [fetchUserDetails, updateUserDetails, dispatch]);
+  }, [fetchUserDetails, updateUserDetails, dispatch, isAuthenticated]);
 
   const onSignIn = useCallback(() => {
     fetchUserDetails().then((response) => {
@@ -270,12 +310,46 @@ export function App() {
     dispatch(closeToast());
   }, [dispatch]);
 
+  // Show loading spinner while checking auth
+  if (checkingAuth) {
+    return (
+      <div style={{
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        minHeight: "100vh",
+        background: "linear-gradient(135deg, #1c1c1c 0%, #2d2d2d 100%)",
+      }}>
+        <div style={{
+          textAlign: "center",
+          color: "#fff"
+        }}>
+          <div style={{
+            width: "48px",
+            height: "48px",
+            margin: "0 auto 1rem",
+            border: "4px solid rgba(255, 255, 255, 0.1)",
+            borderTopColor: "#fff",
+            borderRadius: "50%",
+            animation: "spin 0.8s linear infinite"
+          }} />
+          <p>Loading Remedy...</p>
+        </div>
+      </div>
+    );
+  }
+
+  // Don't show main app if not authenticated
+  if (!isAuthenticated && !location.pathname.startsWith("/auth") && location.pathname !== "/login") {
+    return null;
+  }
+
   return (
     <>
       {window.electron.platform === "win32" && (
         <div className="title-bar">
           <h4>
-            Hydra
+            Remedy
             {hasActiveSubscription && (
               <span className="title-bar__cloud-text"> Cloud</span>
             )}

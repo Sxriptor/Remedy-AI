@@ -3,7 +3,9 @@ import { useNavigate, useSearchParams } from "react-router-dom";
 import "./callback.scss";
 
 export default function AuthCallback() {
-  const [status, setStatus] = useState<"processing" | "success" | "error">("processing");
+  const [status, setStatus] = useState<"processing" | "success" | "error">(
+    "processing"
+  );
   const [error, setError] = useState<string | null>(null);
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
@@ -13,16 +15,16 @@ export default function AuthCallback() {
       try {
         // Get the full hash from URL (includes tokens)
         const hash = window.location.hash;
-        
+
         if (!hash) {
           throw new Error("No authentication data received");
         }
 
         console.log("Processing auth callback...");
-        
+
         // Send the hash to main process to handle
         const result = await window.electron.handleSupabaseCallback(hash);
-        
+
         if (result.success) {
           setStatus("success");
           setTimeout(() => {
@@ -35,7 +37,7 @@ export default function AuthCallback() {
         console.error("Auth callback error:", err);
         setError(err.message || "Authentication failed");
         setStatus("error");
-        
+
         // Redirect to login after showing error
         setTimeout(() => {
           navigate("/login");
@@ -77,5 +79,3 @@ export default function AuthCallback() {
     </div>
   );
 }
-
-

@@ -1,9 +1,12 @@
-import { createClient, SupabaseClient as SupabaseClientType } from "@supabase/supabase-js";
+import {
+  createClient,
+  SupabaseClient as SupabaseClientType,
+} from "@supabase/supabase-js";
 import { logger } from "./logger";
 
 /**
  * Supabase Client for Remedy
- * 
+ *
  * Set your Supabase credentials in .env:
  * - VITE_SUPABASE_URL
  * - VITE_SUPABASE_ANON_KEY
@@ -12,12 +15,12 @@ import { logger } from "./logger";
 let supabaseClient: SupabaseClientType | null = null;
 
 export const initializeSupabase = () => {
-  const supabaseUrl = process.env.VITE_SUPABASE_URL;
-  const supabaseAnonKey = process.env.VITE_SUPABASE_ANON_KEY;
+  const supabaseUrl = process.env.MAIN_VITE_SUPABASE_URL;
+  const supabaseAnonKey = process.env.MAIN_VITE_SUPABASE_ANON_KEY;
 
   if (!supabaseUrl || !supabaseAnonKey) {
     logger.warn(
-      "Supabase credentials not configured. Please set VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY in .env"
+      "Supabase credentials not configured. Please set MAIN_VITE_SUPABASE_URL and MAIN_VITE_SUPABASE_ANON_KEY in .env"
     );
     return null;
   }
@@ -53,13 +56,31 @@ class SupabaseClientWrapper {
       logger.warn("Supabase client not initialized");
       // Return a stub that throws errors
       return {
-        signInWithOAuth: async () => ({ data: null, error: new Error("Supabase not initialized") }),
-        signInWithPassword: async () => ({ data: null, error: new Error("Supabase not initialized") }),
-        signUp: async () => ({ data: null, error: new Error("Supabase not initialized") }),
+        signInWithOAuth: async () => ({
+          data: null,
+          error: new Error("Supabase not initialized"),
+        }),
+        signInWithPassword: async () => ({
+          data: null,
+          error: new Error("Supabase not initialized"),
+        }),
+        signUp: async () => ({
+          data: null,
+          error: new Error("Supabase not initialized"),
+        }),
         signOut: async () => ({ error: new Error("Supabase not initialized") }),
-        getSession: async () => ({ data: { session: null }, error: new Error("Supabase not initialized") }),
-        getUser: async () => ({ data: { user: null }, error: new Error("Supabase not initialized") }),
-        setSession: async () => ({ data: { session: null }, error: new Error("Supabase not initialized") }),
+        getSession: async () => ({
+          data: { session: null },
+          error: new Error("Supabase not initialized"),
+        }),
+        getUser: async () => ({
+          data: { user: null },
+          error: new Error("Supabase not initialized"),
+        }),
+        setSession: async () => ({
+          data: { session: null },
+          error: new Error("Supabase not initialized"),
+        }),
       };
     }
     return client.auth;
@@ -145,4 +166,3 @@ export const supabaseAuth = {
     return user;
   },
 };
-

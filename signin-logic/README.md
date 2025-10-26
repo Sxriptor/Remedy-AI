@@ -12,22 +12,26 @@ This folder contains all the authentication/signin logic extracted from the Cola
 ## Key Components
 
 ### 1. Authentication Context (`lib/auth/context.tsx`)
+
 - Global auth state management
 - Handles both web and Electron authentication flows
 - Manages user sessions and custom user data
 - Provides `useAuth()` hook for components
 
 ### 2. Login/Signup Forms
+
 - `components/auth/LoginForm.tsx` - Login form with GitHub OAuth
 - `components/auth/SignupForm.tsx` - Signup form with GitHub OAuth
 - Both support web and Electron environments
 
 ### 3. Authentication Pages
+
 - `app/login/page.tsx` - Login page wrapper
 - `app/signup/page.tsx` - Signup page wrapper
 - `app/auth/callback/page.tsx` - OAuth callback handler
 
 ### 4. Supabase Clients
+
 - `lib/supabase/client.ts` - Browser client
 - `lib/supabase/server.ts` - Server-side client
 - `lib/supabase/middleware.ts` - Route protection middleware
@@ -35,9 +39,11 @@ This folder contains all the authentication/signin logic extracted from the Cola
 - `lib/supabase/api-auth.ts` - API route authentication
 
 ### 5. User Management
+
 - `lib/auth/user-management.ts` - User creation and management utilities
 
 ### 6. Configuration Files
+
 - `middleware.ts` - Next.js middleware setup
 - `app/layout.tsx` - Root layout with AuthProvider
 

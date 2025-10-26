@@ -5,6 +5,7 @@ Your signin logic has been successfully integrated into Remedy! Here's what was 
 ## What Was Implemented
 
 ### 1. Frontend Components
+
 - **Login Page** (`src/renderer/src/pages/auth/login.tsx`)
   - Modern, styled login page with GitHub OAuth
   - Automatic auth check on load
@@ -16,23 +17,27 @@ Your signin logic has been successfully integrated into Remedy! Here's what was 
   - Auto-redirects after authentication
 
 ### 2. Main Process Handlers
+
 - **`signInWithGitHub`** - Initiates GitHub OAuth flow in external browser
 - **`getSupabaseSession`** - Retrieves current user session
 - **`handleSupabaseCallback`** - Processes OAuth callback and sets session
 
 ### 3. Supabase Client
+
 - **`src/main/services/supabase-client.ts`**
   - Initialized on app startup
   - Provides auth methods: `signInWithOAuth`, `setSession`, `getSession`, `getUser`, `signOut`
   - Singleton pattern to avoid multiple instances
 
 ### 4. Event System
+
 - **`on-supabase-auth-success`** - Fired when authentication succeeds
 - Automatically notifies renderer to update UI
 
 ## Setup Instructions
 
 ### Step 1: Install Dependencies
+
 ```bash
 yarn install
 ```
@@ -42,13 +47,15 @@ yarn install
 Create/update your `.env` file in the project root:
 
 ```env
-# Supabase Configuration
-VITE_SUPABASE_URL=your_supabase_project_url
-VITE_SUPABASE_ANON_KEY=your_supabase_anon_key
-VITE_SUPABASE_REDIRECT_URL=http://localhost:3000
+# Supabase Configuration for Main Process (Electron)
+# Note: Main process env vars must be prefixed with MAIN_VITE_
+MAIN_VITE_SUPABASE_URL=your_supabase_project_url
+MAIN_VITE_SUPABASE_ANON_KEY=your_supabase_anon_key
+MAIN_VITE_SUPABASE_REDIRECT_URL=http://localhost:3000
 ```
 
 **Where to find these values:**
+
 1. Go to your [Supabase Dashboard](https://app.supabase.com/)
 2. Select your project
 3. Go to Settings → API
@@ -117,15 +124,16 @@ END;
 $$ language 'plpgsql';
 
 -- Trigger to automatically update updated_at
-CREATE TRIGGER update_users_updated_at 
-    BEFORE UPDATE ON users 
-    FOR EACH ROW 
+CREATE TRIGGER update_users_updated_at
+    BEFORE UPDATE ON users
+    FOR EACH ROW
     EXECUTE FUNCTION update_updated_at_column();
 ```
 
 ### Step 5: Test the Integration
 
 1. **Start the app**:
+
    ```bash
    yarn dev
    ```
@@ -195,7 +203,7 @@ import { SupabaseClient } from "@main/services";
 // Sign in with OAuth
 const { data, error } = await SupabaseClient.signInWithOAuth({
   provider: "github",
-  options: { redirectTo: "..." }
+  options: { redirectTo: "..." },
 });
 
 // Get current session
@@ -211,18 +219,22 @@ const { error } = await SupabaseClient.signOut();
 ## Troubleshooting
 
 ### "Supabase not initialized" error
+
 - Make sure your `.env` file has the correct Supabase credentials
 - Restart the app after adding/changing `.env`
 
 ### GitHub OAuth redirect fails
+
 - Check that your GitHub OAuth app callback URL matches: `http://localhost:3000/auth/callback`
 - Verify the callback URL is configured in Supabase GitHub provider settings
 
 ### Session not persisting
+
 - Check that `persistSession: true` is set in `supabase-client.ts`
 - Verify Supabase project URL and anon key are correct
 
 ### Browser doesn't open
+
 - Check if `shell.openExternal()` has permissions
 - Try running app with elevated permissions on Windows
 
@@ -251,4 +263,3 @@ The authentication system is now fully integrated! You can:
 - `src/renderer/src/declaration.d.ts` - TypeScript definitions
 
 All TypeScript checks pass! ✅
-
