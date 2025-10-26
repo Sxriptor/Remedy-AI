@@ -80,10 +80,9 @@ export function UserProfileContextProvider({
 
   const getUserStats = useCallback(async () => {
     // User stats removed - no longer using Hydra API
-    Promise.resolve(null)
-      .then((stats) => {
-        setUserStats(stats);
-      });
+    Promise.resolve(null).then((stats) => {
+      setUserStats(stats);
+    });
   }, [userId]);
 
   const getUserLibraryGames = useCallback(

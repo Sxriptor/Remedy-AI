@@ -249,10 +249,7 @@ export function DownloadGroup({
       <ul className="download-group__downloads">
         {library.map((game) => {
           return (
-            <li
-              key={game.id}
-              className="download-group__item"
-            >
+            <li key={game.id} className="download-group__item">
               <div className="download-group__cover">
                 <div className="download-group__cover-backdrop">
                   <img

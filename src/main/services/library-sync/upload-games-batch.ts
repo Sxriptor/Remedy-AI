@@ -7,7 +7,7 @@ import { AchievementWatcherManager } from "../achievements/achievement-watcher-m
  */
 export const uploadGamesBatch = async () => {
   // Stub: No longer syncing to cloud
-  
+
   // Still initialize achievement watchers locally
   AchievementWatcherManager.preSearchAchievements();
 

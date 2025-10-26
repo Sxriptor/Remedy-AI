@@ -10,7 +10,7 @@ const checkDebridAvailability = async (
 ) => {
   // Stub: Return empty availability - no magnets are cached
   const availability: Record<string, boolean> = {};
-  magnets.forEach(magnet => {
+  magnets.forEach((magnet) => {
     availability[magnet] = false;
   });
   return availability;

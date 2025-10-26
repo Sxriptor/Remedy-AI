@@ -57,7 +57,7 @@ export const loadState = async () => {
   await HydraApi.setupApi().catch((err) => {
     logger.error("Failed to setup API client:", err);
   });
-  
+
   uploadGamesBatch();
 
   const downloads = await downloadsSublevel

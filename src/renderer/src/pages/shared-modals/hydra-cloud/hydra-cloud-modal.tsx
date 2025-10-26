@@ -10,7 +10,7 @@ export interface HydraCloudModalProps {
 
 /**
  * Cloud Features Modal
- * 
+ *
  * This modal has been stubbed out - it was originally for Hydra subscription features.
  * You can implement your own premium/cloud features here if needed.
  */

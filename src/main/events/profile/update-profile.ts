@@ -10,7 +10,9 @@ import { fileTypeFromFile } from "file-type";
 /**
  * Cloud sync disabled - profile updates no longer sync to remote server
  */
-export const patchUserProfile = async (_updateProfile: UpdateProfileRequest) => {
+export const patchUserProfile = async (
+  _updateProfile: UpdateProfileRequest
+) => {
   // Stub: Profile updates are now local-only
   return {} as UserProfile;
 };

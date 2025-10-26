@@ -25,7 +25,7 @@ interface UserAuth {
 
 /**
  * Generic API Client - Configure with your own backend (e.g., Supabase)
- * 
+ *
  * This is a stub implementation. You should:
  * 1. Set your API base URL via environment variable or config
  * 2. Implement authentication with Supabase
@@ -53,11 +53,11 @@ export class ApiClient {
   static async handleExternalAuth(uri: string) {
     // TODO: Implement your own authentication flow with Supabase
     logger.log("External auth received:", uri);
-    
+
     // Example: Parse auth data from URI
     // const { payload } = url.parse(uri, true).query;
     // Implement your Supabase authentication here
-    
+
     if (WindowManager.mainWindow) {
       WindowManager.mainWindow.webContents.send("on-signin");
       await clearGamesRemoteIds();
@@ -77,7 +77,7 @@ export class ApiClient {
   static async setupApi() {
     // TODO: Configure your API base URL
     const baseURL = process.env.REMEDY_API_URL || "http://localhost:3000/api";
-    
+
     this.instance = axios.create({
       baseURL,
       headers: { "User-Agent": `Remedy v${appVersion}` },
@@ -115,7 +115,9 @@ export class ApiClient {
 
   public static async refreshToken() {
     // TODO: Implement token refresh with your backend
-    throw new Error("Token refresh not implemented - configure your auth backend");
+    throw new Error(
+      "Token refresh not implemented - configure your auth backend"
+    );
   }
 
   private static async revalidateAccessTokenIfExpired() {
@@ -178,7 +180,11 @@ export class ApiClient {
     await this.validateOptions(options);
 
     try {
-      const response = await this.instance.post<T>(url, data, this.getAxiosConfig());
+      const response = await this.instance.post<T>(
+        url,
+        data,
+        this.getAxiosConfig()
+      );
       return response.data;
     } catch (err) {
       logger.error("API POST error:", url, err);
@@ -194,7 +200,11 @@ export class ApiClient {
     await this.validateOptions(options);
 
     try {
-      const response = await this.instance.put<T>(url, data, this.getAxiosConfig());
+      const response = await this.instance.put<T>(
+        url,
+        data,
+        this.getAxiosConfig()
+      );
       return response.data;
     } catch (err) {
       logger.error("API PUT error:", url, err);
@@ -210,7 +220,11 @@ export class ApiClient {
     await this.validateOptions(options);
 
     try {
-      const response = await this.instance.patch<T>(url, data, this.getAxiosConfig());
+      const response = await this.instance.patch<T>(
+        url,
+        data,
+        this.getAxiosConfig()
+      );
       return response.data;
     } catch (err) {
       logger.error("API PATCH error:", url, err);
@@ -222,7 +236,10 @@ export class ApiClient {
     await this.validateOptions(options);
 
     try {
-      const response = await this.instance.delete<T>(url, this.getAxiosConfig());
+      const response = await this.instance.delete<T>(
+        url,
+        this.getAxiosConfig()
+      );
       return response.data;
     } catch (err) {
       logger.error("API DELETE error:", url, err);
@@ -233,4 +250,3 @@ export class ApiClient {
 
 // Export with original name for compatibility
 export { ApiClient as HydraApi };
-

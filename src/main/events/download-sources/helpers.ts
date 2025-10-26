@@ -3,7 +3,7 @@ import { z } from "zod";
 import { downloadSourcesSublevel, repacksSublevel } from "@main/level";
 import { DownloadSourceStatus } from "@shared";
 import crypto from "node:crypto";
-import { logger, ResourceCache } from "@main/services";
+import { logger } from "@main/services";
 
 export const downloadSourceSchema = z.object({
   name: z.string().max(255),
@@ -22,29 +22,14 @@ export type TitleHashMapping = Record<string, number[]>;
 let titleHashMappingCache: TitleHashMapping | null = null;
 
 export const getTitleHashMapping = async (): Promise<TitleHashMapping> => {
+  // Download sources manifest removed - app now focuses on productivity tools
+  // TODO: Implement your own download source mapping for IDE/productivity app installers
   if (titleHashMappingCache) {
     return titleHashMappingCache;
   }
-
-  try {
-    const cached =
-      ResourceCache.getCachedData<TitleHashMapping>("sources-manifest");
-    if (cached) {
-      titleHashMappingCache = cached;
-      return cached;
-    }
-
-    const fetched = await ResourceCache.fetchAndCache<TitleHashMapping>(
-      "sources-manifest",
-      "https://cdn.losbroxas.org/sources-manifest.json",
-      10000
-    );
-    titleHashMappingCache = fetched;
-    return fetched;
-  } catch (error) {
-    logger.error("Failed to fetch title hash mapping:", error);
-    return {} as TitleHashMapping;
-  }
+  
+  titleHashMappingCache = {};
+  return titleHashMappingCache;
 };
 
 export const hashTitle = (title: string): string => {
@@ -108,34 +93,14 @@ export const checkUrlExists = async (url: string): Promise<boolean> => {
 let steamGamesFormattedCache: FormattedSteamGamesByLetter | null = null;
 
 export const getSteamGames = async (): Promise<FormattedSteamGamesByLetter> => {
+  // Steam games removed - returning empty data structure
+  // TODO: Replace with your own IDE/productivity app catalog
   if (steamGamesFormattedCache) {
     return steamGamesFormattedCache;
   }
-
-  let steamGames: SteamGamesByLetter;
-
-  const cached = ResourceCache.getCachedData<SteamGamesByLetter>(
-    "steam-games-by-letter"
-  );
-  if (cached) {
-    steamGames = cached;
-  } else {
-    steamGames = await ResourceCache.fetchAndCache<SteamGamesByLetter>(
-      "steam-games-by-letter",
-      `${import.meta.env.MAIN_VITE_EXTERNAL_RESOURCES_URL}/steam-games-by-letter.json`
-    );
-  }
-
-  const formattedData: FormattedSteamGamesByLetter = {};
-  for (const [letter, games] of Object.entries(steamGames)) {
-    formattedData[letter] = games.map((game) => ({
-      ...game,
-      formattedName: formatName(game.name),
-    }));
-  }
-
-  steamGamesFormattedCache = formattedData;
-  return formattedData;
+  
+  steamGamesFormattedCache = {};
+  return steamGamesFormattedCache;
 };
 
 export type SublevelIterator = AsyncIterable<[string, { id: number }]>;

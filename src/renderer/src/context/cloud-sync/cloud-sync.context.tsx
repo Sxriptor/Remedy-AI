@@ -139,7 +139,9 @@ export function CloudSyncContextProvider({
       setFreezingArtifact(true);
       try {
         // Artifact freeze toggle removed - no longer using Hydra API
-        console.log(`Artifact ${freeze ? 'freeze' : 'unfreeze'} not implemented for ${gameArtifactId}`);
+        console.log(
+          `Artifact ${freeze ? "freeze" : "unfreeze"} not implemented for ${gameArtifactId}`
+        );
         getGameArtifacts();
       } catch (err) {
         logger.error("Failed to toggle artifact freeze", objectId, shop, err);
@@ -189,11 +191,10 @@ export function CloudSyncContextProvider({
     async (gameArtifactId: string) => {
       // Artifact deletion removed - no longer using Hydra API
       console.log(`Artifact deletion not implemented for ${gameArtifactId}`);
-      return Promise.resolve({ ok: true })
-        .then(() => {
-          getGameBackupPreview();
-          getGameArtifacts();
-        });
+      return Promise.resolve({ ok: true }).then(() => {
+        getGameBackupPreview();
+        getGameArtifacts();
+      });
     },
     [getGameBackupPreview, getGameArtifacts]
   );

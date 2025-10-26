@@ -129,29 +129,10 @@ export class ResourceCache {
   }
 
   static async updateResourcesOnStartup(): Promise<void> {
-    logger.info("Starting background resource cache update...");
-
-    const resources = [
-      {
-        name: "steam-games-by-letter",
-        url: `${import.meta.env.MAIN_VITE_EXTERNAL_RESOURCES_URL}/steam-games-by-letter.json`,
-      },
-      {
-        name: "sources-manifest",
-        url: "https://cdn.losbroxas.org/sources-manifest.json",
-      },
-    ];
-
-    await Promise.allSettled(
-      resources.map(async (resource) => {
-        try {
-          await this.fetchAndCache(resource.name, resource.url);
-        } catch (error) {
-          logger.error(`Failed to update ${resource.name} on startup:`, error);
-        }
-      })
+    // Steam games and external resources removed - app now focuses on productivity tools
+    // TODO: Implement your own resource manifest for IDE/productivity app catalog
+    logger.info(
+      "Resource cache update skipped - no external resources configured"
     );
-
-    logger.info("Resource cache update complete");
   }
 }

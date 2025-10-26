@@ -55,12 +55,13 @@ export function ReportProfile() {
   const onSubmit = useCallback(
     async (_values: FormValues) => {
       // Profile reporting removed - no longer using Hydra API
-      console.log(`Profile reporting not implemented for user ${userProfile!.id}`);
-      return Promise.resolve()
-        .then(() => {
-          showSuccessToast(t("profile_reported"));
-          setShowReportProfileModal(false);
-        });
+      console.log(
+        `Profile reporting not implemented for user ${userProfile!.id}`
+      );
+      return Promise.resolve().then(() => {
+        showSuccessToast(t("profile_reported"));
+        setShowReportProfileModal(false);
+      });
     },
     [userProfile, showSuccessToast, t]
   );

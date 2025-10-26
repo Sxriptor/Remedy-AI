@@ -3,11 +3,7 @@ import { Controller, useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 import { useDate, useToast, useUserDetails } from "@renderer/hooks";
 import { useCallback, useContext, useEffect, useState } from "react";
-import {
-  KeyIcon,
-  MailIcon,
-  XCircleFillIcon,
-} from "@primer/octicons-react";
+import { KeyIcon, MailIcon, XCircleFillIcon } from "@primer/octicons-react";
 import { settingsContext } from "@renderer/context";
 import { AuthPage } from "@shared";
 import "./settings-account.scss";
@@ -93,7 +89,7 @@ export function SettingsAccount() {
 
   // Cloud subscription removed - not using Hydra Cloud
   // @ts-ignore - keeping function for potential future use
-  const getHydraCloudSectionContent = () => {
+  const _getHydraCloudSectionContent = () => {
     const hasSubscribedBefore = Boolean(userDetails?.subscription?.expiresAt);
     const isRenewalActive = userDetails?.subscription?.status === "active";
 

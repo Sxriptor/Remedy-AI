@@ -114,7 +114,9 @@ export function useUserDetails() {
   const updateFriendRequestState = useCallback(
     async (userId: string, action: FriendRequestAction) => {
       // Friend request updates removed - no longer using Hydra API
-      console.log(`Friend request ${action} not implemented for user ${userId}`);
+      console.log(
+        `Friend request ${action} not implemented for user ${userId}`
+      );
       return Promise.resolve().then(() => fetchFriendRequests());
     },
     [fetchFriendRequests]

@@ -24,10 +24,7 @@ export const commonRedistPath = path.join(
   "CommonRedist"
 );
 
-export const logsPath = path.join(
-  SystemPath.getPath("userData"),
-  "logs"
-);
+export const logsPath = path.join(SystemPath.getPath("userData"), "logs");
 
 export const achievementSoundPath = app.isPackaged
   ? path.join(process.resourcesPath, "achievement.wav")

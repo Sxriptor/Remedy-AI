@@ -119,10 +119,7 @@ export const getDownloadersForUri = (uri: string) => {
     return [Downloader.RealDebrid];
 
   if (uri.startsWith("magnet:")) {
-    return [
-      Downloader.TorBox,
-      Downloader.RealDebrid,
-    ];
+    return [Downloader.TorBox, Downloader.RealDebrid];
   }
 
   return [];

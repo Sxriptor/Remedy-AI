@@ -13,7 +13,6 @@ export class DownloadManager {
     logger.warn("startRPC not implemented - Python RPC removed");
   }
 
-
   public static async watchDownloads() {
     // Python RPC removed - download watching disabled
     // TODO: Implement simple HTTP download progress tracking if needed

@@ -12,11 +12,10 @@ export function useFeature() {
 
   useEffect(() => {
     // Feature flags removed - no longer using Hydra API
-    Promise.resolve([])
-      .then((features) => {
-        localStorage.setItem("features", JSON.stringify(features || []));
-        setFeatures(features || []);
-      });
+    Promise.resolve([]).then((features) => {
+      localStorage.setItem("features", JSON.stringify(features || []));
+      setFeatures(features || []);
+    });
   }, []);
 
   const isFeatureEnabled = useCallback(
