@@ -1,13 +1,14 @@
 import type { Game } from "@types";
-import { HydraApi } from "../hydra-api";
 
+/**
+ * Cloud sync has been disabled.
+ * Game playtime is now only tracked locally.
+ */
 export const updateGamePlaytime = async (
-  game: Game,
-  deltaInMillis: number,
-  lastTimePlayed: Date
+  _game: Game,
+  _deltaInMillis: number,
+  _lastTimePlayed: Date
 ) => {
-  return HydraApi.put(`/profile/games/${game.remoteId}`, {
-    playTimeDeltaInSeconds: Math.trunc(deltaInMillis / 1000),
-    lastTimePlayed,
-  });
+  // Stub: No longer syncing playtime to cloud
+  return Promise.resolve();
 };

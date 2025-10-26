@@ -1,6 +1,5 @@
 import { downloadsSublevel } from "./level/sublevels/downloads";
 import { sortBy } from "lodash-es";
-import { Downloader } from "@shared";
 import { levelKeys, db } from "./level";
 import type { UserPreferences } from "@types";
 import {
@@ -53,10 +52,13 @@ export const loadState = async () => {
     DeckyPlugin.checkAndUpdateIfOutdated();
   }
 
-  await HydraApi.setupApi().then(() => {
-    uploadGamesBatch();
-    // WSClient.connect();
+  // Setup API client (configure your own backend endpoints)
+  const { logger } = await import("@main/services");
+  await HydraApi.setupApi().catch((err) => {
+    logger.error("Failed to setup API client:", err);
   });
+  
+  uploadGamesBatch();
 
   const downloads = await downloadsSublevel
     .values()
@@ -76,15 +78,8 @@ export const loadState = async () => {
 
   const [nextItemOnQueue] = downloads.filter((game) => game.queued);
 
-  const downloadsToSeed = downloads.filter(
-    (game) =>
-      game.shouldSeed &&
-      game.downloader === Downloader.Torrent &&
-      game.progress === 1 &&
-      game.uri !== null
-  );
-
-  await DownloadManager.startRPC(nextItemOnQueue, downloadsToSeed);
+  // Seeding functionality removed - torrents no longer supported
+  await DownloadManager.startRPC(nextItemOnQueue, undefined);
 
   startMainLoop();
 

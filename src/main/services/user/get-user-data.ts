@@ -1,5 +1,5 @@
 import { User, type ProfileVisibility, type UserDetails } from "@types";
-import { HydraApi } from "../hydra-api";
+import { HydraApi } from "../api-client";
 import { UserNotLoggedInError } from "@shared";
 import { logger } from "../logger";
 import { db } from "@main/level";

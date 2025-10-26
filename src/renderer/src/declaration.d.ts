@@ -50,8 +50,7 @@ declare global {
     cancelGameDownload: (shop: GameShop, objectId: string) => Promise<void>;
     pauseGameDownload: (shop: GameShop, objectId: string) => Promise<void>;
     resumeGameDownload: (shop: GameShop, objectId: string) => Promise<void>;
-    pauseGameSeed: (shop: GameShop, objectId: string) => Promise<void>;
-    resumeGameSeed: (shop: GameShop, objectId: string) => Promise<void>;
+    // Seeding removed - torrents no longer supported
     onDownloadProgress: (
       cb: (value: DownloadProgress | null) => void
     ) => () => Electron.IpcRenderer;
@@ -271,7 +270,6 @@ declare global {
 
     /* Misc */
     openExternal: (src: string) => Promise<void>;
-    openCheckout: () => Promise<void>;
     getVersion: () => Promise<string>;
     isStaging: () => Promise<boolean>;
     ping: () => string;
@@ -281,48 +279,7 @@ declare global {
       options: Electron.OpenDialogOptions
     ) => Promise<Electron.OpenDialogReturnValue>;
     showItemInFolder: (path: string) => Promise<void>;
-    hydraApi: {
-      get: <T = unknown>(
-        url: string,
-        options?: {
-          params?: unknown;
-          needsAuth?: boolean;
-          needsSubscription?: boolean;
-          ifModifiedSince?: Date;
-        }
-      ) => Promise<T>;
-      post: <T = unknown>(
-        url: string,
-        options?: {
-          data?: unknown;
-          needsAuth?: boolean;
-          needsSubscription?: boolean;
-        }
-      ) => Promise<T>;
-      put: <T = unknown>(
-        url: string,
-        options?: {
-          data?: unknown;
-          needsAuth?: boolean;
-          needsSubscription?: boolean;
-        }
-      ) => Promise<T>;
-      patch: <T = unknown>(
-        url: string,
-        options?: {
-          data?: unknown;
-          needsAuth?: boolean;
-          needsSubscription?: boolean;
-        }
-      ) => Promise<T>;
-      delete: <T = unknown>(
-        url: string,
-        options?: {
-          needsAuth?: boolean;
-          needsSubscription?: boolean;
-        }
-      ) => Promise<T>;
-    };
+    // Hydra API removed - no longer making calls to Hydra servers
     canInstallCommonRedist: () => Promise<boolean>;
     installCommonRedist: () => Promise<void>;
     installHydraDeckyPlugin: () => Promise<{

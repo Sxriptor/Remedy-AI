@@ -54,18 +54,12 @@ export function CloudSyncRenameArtifactModal({
   }, [artifact, setValue]);
 
   const onSubmit = useCallback(
-    async (data: InferType<typeof validationSchema>) => {
+    async (_data: InferType<typeof validationSchema>) => {
       try {
         if (!artifact) return;
 
-        await window.electron.hydraApi.put(
-          `/profile/games/artifacts/${artifact.id}`,
-          {
-            data: {
-              label: data.label,
-            },
-          }
-        );
+        // Artifact renaming removed - no longer using Hydra API
+        console.log(`Artifact renaming not implemented for ${artifact.id}`);
         await getGameArtifacts();
 
         showSuccessToast(t("artifact_renamed"));

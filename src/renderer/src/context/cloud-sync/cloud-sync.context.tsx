@@ -98,18 +98,8 @@ export function CloudSyncContextProvider({
   );
 
   const getGameArtifacts = useCallback(async () => {
-    const params = new URLSearchParams({
-      objectId,
-      shop,
-    });
-
-    const results = await window.electron.hydraApi
-      .get<GameArtifact[]>(`/profile/games/artifacts?${params.toString()}`, {
-        needsSubscription: true,
-      })
-      .catch(() => {
-        return [];
-      });
+    // Game artifacts removed - no longer using Hydra API
+    const results: GameArtifact[] = [];
     setArtifacts(results);
   }, [objectId, shop]);
 
@@ -148,10 +138,8 @@ export function CloudSyncContextProvider({
     async (gameArtifactId: string, freeze: boolean) => {
       setFreezingArtifact(true);
       try {
-        const endpoint = freeze ? "freeze" : "unfreeze";
-        await window.electron.hydraApi.put(
-          `/profile/games/artifacts/${gameArtifactId}/${endpoint}`
-        );
+        // Artifact freeze toggle removed - no longer using Hydra API
+        console.log(`Artifact ${freeze ? 'freeze' : 'unfreeze'} not implemented for ${gameArtifactId}`);
         getGameArtifacts();
       } catch (err) {
         logger.error("Failed to toggle artifact freeze", objectId, shop, err);
@@ -199,8 +187,9 @@ export function CloudSyncContextProvider({
 
   const deleteGameArtifact = useCallback(
     async (gameArtifactId: string) => {
-      return window.electron.hydraApi
-        .delete<{ ok: boolean }>(`/profile/games/artifacts/${gameArtifactId}`)
+      // Artifact deletion removed - no longer using Hydra API
+      console.log(`Artifact deletion not implemented for ${gameArtifactId}`);
+      return Promise.resolve({ ok: true })
         .then(() => {
           getGameBackupPreview();
           getGameArtifacts();

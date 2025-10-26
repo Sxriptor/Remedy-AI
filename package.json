@@ -1,12 +1,12 @@
 {
-  "name": "hydralauncher",
+  "name": "Remedy",
   "version": "3.7.1",
-  "description": "Hydra",
+  "description": "Remedy",
   "main": "./out/main/index.js",
   "author": "Los Broxas",
   "repository": {
     "type": "git",
-    "url": "https://github.com/hydralauncher/hydra.git"
+    "url": "https://github.com/Sxriptor/Remedy-AI.git"
   },
   "type": "module",
   "engines": {
@@ -81,7 +81,7 @@
     "react-shadow": "^20.6.0",
     "react-tooltip": "^5.28.1",
     "sound-play": "^1.1.0",
-    "steam-shortcut-editor": "https://github.com/hydralauncher/steam-shortcut-editor",
+    "steam-shortcut-editor": "^3.2.2",
     "sudo-prompt": "^9.2.1",
     "tar": "^7.4.3",
     "tough-cookie": "^5.1.1",

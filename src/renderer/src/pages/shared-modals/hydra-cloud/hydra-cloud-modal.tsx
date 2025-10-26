@@ -1,4 +1,4 @@
-import { Button, Modal } from "@renderer/components";
+import { Modal } from "@renderer/components";
 import { useTranslation } from "react-i18next";
 import "./hydra-cloud-modal.scss";
 
@@ -8,16 +8,18 @@ export interface HydraCloudModalProps {
   onClose: () => void;
 }
 
+/**
+ * Cloud Features Modal
+ * 
+ * This modal has been stubbed out - it was originally for Hydra subscription features.
+ * You can implement your own premium/cloud features here if needed.
+ */
 export const HydraCloudModal = ({
   feature,
   visible,
   onClose,
 }: HydraCloudModalProps) => {
   const { t } = useTranslation("hydra_cloud");
-
-  const handleClickOpenCheckout = () => {
-    window.electron.openCheckout();
-  };
 
   return (
     <Modal visible={visible} title={t("hydra_cloud")} onClose={onClose}>
@@ -26,7 +28,6 @@ export const HydraCloudModal = ({
         data-hydra-cloud-feature={feature}
       >
         {t("hydra_cloud_feature_found")}
-        <Button onClick={handleClickOpenCheckout}>{t("learn_more")}</Button>
       </div>
     </Modal>
   );

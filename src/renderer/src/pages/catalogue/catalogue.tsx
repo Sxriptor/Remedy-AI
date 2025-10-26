@@ -51,17 +51,13 @@ export default function Catalogue() {
   const { t, i18n } = useTranslation("catalogue");
 
   const debouncedSearch = useRef(
-    debounce(async (filters, pageSize, offset) => {
+    debounce(async (_filters: unknown, _pageSize: number, _offset: number) => {
       const abortController = new AbortController();
       abortControllerRef.current = abortController;
 
-      const response = await window.electron.hydraApi.post<{
-        edges: CatalogueSearchResult[];
-        count: number;
-      }>("/catalogue/search", {
-        data: { ...filters, take: pageSize, skip: offset },
-        needsAuth: false,
-      });
+      // Catalogue search removed - no longer using Hydra API
+      // TODO: Implement your own catalogue source
+      const response = { edges: [], count: 0 };
 
       if (abortController.signal.aborted) return;
 

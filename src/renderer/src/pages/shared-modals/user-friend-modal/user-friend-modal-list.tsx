@@ -35,12 +35,8 @@ export const UserFriendModalList = ({
     if (page > maxPage) return;
     setIsLoading(true);
 
-    const url = isMe ? "/profile/friends" : `/users/${userId}/friends`;
-
-    window.electron.hydraApi
-      .get<{ totalFriends: number; friends: UserFriend[] }>(url, {
-        params: { take: pageSize, skip: page * pageSize },
-      })
+    // Friends list removed - no longer using Hydra API
+    Promise.resolve({ totalFriends: 0, friends: [] })
       .then((newPage) => {
         if (page === 0) {
           setMaxPage(newPage.totalFriends / pageSize);

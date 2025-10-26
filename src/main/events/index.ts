@@ -1,4 +1,4 @@
-import { appVersion, defaultDownloadsPath, isStaging } from "@main/constants";
+import { appVersion, defaultDownloadsPath } from "@main/constants";
 import { ipcMain } from "electron";
 
 import "./catalogue/get-game-shop-details";
@@ -36,7 +36,6 @@ import "./library/get-default-wine-prefix-selection-path";
 import "./library/cleanup-unused-assets";
 import "./library/create-steam-shortcut";
 import "./library/copy-custom-game-asset";
-import "./misc/open-checkout";
 import "./misc/open-external";
 import "./misc/show-open-dialog";
 import "./misc/show-item-in-folder";
@@ -44,16 +43,11 @@ import "./misc/install-common-redist";
 import "./misc/can-install-common-redist";
 import "./misc/save-temp-file";
 import "./misc/delete-temp-file";
-import "./misc/install-hydra-decky-plugin";
-import "./misc/get-hydra-decky-plugin-info";
 import "./misc/check-homebrew-folder-exists";
-import "./misc/hydra-api-call";
 import "./torrenting/cancel-game-download";
 import "./torrenting/pause-game-download";
 import "./torrenting/resume-game-download";
 import "./torrenting/start-game-download";
-import "./torrenting/pause-game-seed";
-import "./torrenting/resume-game-seed";
 import "./torrenting/check-debrid-availability";
 import "./user-preferences/get-user-preferences";
 import "./user-preferences/update-user-preferences";
@@ -104,6 +98,6 @@ import { isPortableVersion } from "@main/helpers";
 
 ipcMain.handle("ping", () => "pong");
 ipcMain.handle("getVersion", () => appVersion);
-ipcMain.handle("isStaging", () => isStaging);
+ipcMain.handle("isStaging", () => false);
 ipcMain.handle("isPortableVersion", () => isPortableVersion());
 ipcMain.handle("getDefaultDownloadsPath", () => defaultDownloadsPath);

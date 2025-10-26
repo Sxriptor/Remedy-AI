@@ -12,7 +12,7 @@ import {
   Aria2,
 } from "@main/services";
 import resources from "@locales";
-import { PythonRPC } from "./services/python-rpc";
+// Python RPC removed - no longer needed
 import { db, levelKeys } from "./level";
 import { loadState } from "./main";
 
@@ -20,8 +20,8 @@ const { autoUpdater } = updater;
 
 autoUpdater.setFeedURL({
   provider: "github",
-  owner: "hydralauncher",
-  repo: "hydra",
+  owner: "Sxriptor",
+  repo: "Remedy-AI",
 });
 
 autoUpdater.logger = logger;
@@ -42,7 +42,7 @@ i18n.init({
   },
 });
 
-const PROTOCOL = "hydralauncher";
+const PROTOCOL = "remedy";
 
 if (process.defaultApp) {
   if (process.argv.length >= 2) {
@@ -58,7 +58,7 @@ if (process.defaultApp) {
 // initialization and is ready to create browser windows.
 // Some APIs can only be used after this event occurs.
 app.whenReady().then(async () => {
-  electronApp.setAppUserModelId("gg.hydralauncher.hydra");
+  electronApp.setAppUserModelId("com.remedy.app");
 
   protocol.handle("local", (request) => {
     const filePath = request.url.slice("local:".length);
@@ -221,8 +221,7 @@ app.on("before-quit", async (e) => {
 
   if (!canAppBeClosed) {
     e.preventDefault();
-    /* Disconnects libtorrent */
-    PythonRPC.kill();
+    /* Python RPC removed */
     Aria2.kill();
     await clearGamesPlaytime();
     canAppBeClosed = true;

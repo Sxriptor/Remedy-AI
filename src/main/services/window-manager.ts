@@ -14,7 +14,7 @@ import { t } from "i18next";
 import path from "node:path";
 import icon from "@resources/icon.png?asset";
 import trayIcon from "@resources/tray-icon.png?asset";
-import { HydraApi } from "./hydra-api";
+import { HydraApi } from "./api-client";
 import UserAgent from "user-agents";
 import { db, gamesSublevel, levelKeys } from "@main/level";
 import { orderBy, slice } from "lodash-es";
@@ -24,7 +24,6 @@ import type {
   UserPreferences,
 } from "@types";
 import { AuthPage, generateAchievementCustomNotificationTest } from "@shared";
-import { isStaging } from "@main/constants";
 
 export class WindowManager {
   public static mainWindow: Electron.BrowserWindow | null = null;
@@ -192,7 +191,7 @@ export class WindowManager {
     this.mainWindow.removeMenu();
 
     this.mainWindow.on("ready-to-show", () => {
-      if (!app.isPackaged || isStaging)
+      if (!app.isPackaged)
         WindowManager.mainWindow?.webContents.openDevTools();
       WindowManager.mainWindow?.show();
     });
@@ -384,7 +383,7 @@ export class WindowManager {
     this.notificationWindow.setAlwaysOnTop(true, "screen-saver", 1);
     this.loadNotificationWindowURL();
 
-    if (!app.isPackaged || isStaging) {
+    if (!app.isPackaged) {
       this.notificationWindow.webContents.openDevTools();
     }
   }
@@ -462,7 +461,7 @@ export class WindowManager {
 
       editorWindow.once("ready-to-show", () => {
         editorWindow.show();
-        if (!app.isPackaged || isStaging) {
+        if (!app.isPackaged) {
           editorWindow.webContents.openDevTools();
         }
       });
@@ -582,7 +581,7 @@ export class WindowManager {
       tray.popUpContextMenu(contextMenu);
     };
 
-    tray.setToolTip("Hydra Launcher");
+    tray.setToolTip("Remedy");
 
     if (process.platform === "win32") {
       await updateSystemTray();

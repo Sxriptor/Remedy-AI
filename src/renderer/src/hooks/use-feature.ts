@@ -11,8 +11,8 @@ export function useFeature() {
   const [features, setFeatures] = useState<string[] | null>(null);
 
   useEffect(() => {
-    window.electron.hydraApi
-      .get<string[]>("/features", { needsAuth: false })
+    // Feature flags removed - no longer using Hydra API
+    Promise.resolve([])
       .then((features) => {
         localStorage.setItem("features", JSON.stringify(features || []));
         setFeatures(features || []);

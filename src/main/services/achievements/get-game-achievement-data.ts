@@ -1,4 +1,4 @@
-import { HydraApi } from "../hydra-api";
+import { HydraApi } from "../api-client";
 import type { GameAchievement, GameShop, SteamAchievement } from "@types";
 import { UserNotLoggedInError } from "@shared";
 import { logger } from "../logger";

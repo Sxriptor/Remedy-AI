@@ -1,12 +1,7 @@
 /// <reference types="vite/client" />
 
 interface ImportMetaEnv {
-  readonly MAIN_VITE_API_URL: string;
-  readonly MAIN_VITE_ANALYTICS_API_URL: string;
-  readonly MAIN_VITE_AUTH_URL: string;
-  readonly MAIN_VITE_CHECKOUT_URL: string;
-  readonly MAIN_VITE_EXTERNAL_RESOURCES_URL: string;
-  readonly MAIN_VITE_WS_URL: string;
+  readonly REMEDY_API_URL?: string;
   readonly MAIN_VITE_RENDERER_URL: string;
   readonly ELECTRON_RENDERER_URL: string;
 }

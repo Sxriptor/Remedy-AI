@@ -1,5 +1,4 @@
 import { commonRedistPath } from "@main/constants";
-import axios from "axios";
 import fs from "node:fs";
 import cp from "node:child_process";
 import path from "node:path";
@@ -95,14 +94,9 @@ export class CommonRedistManager {
         continue;
       }
 
-      const response = await axios.get(
-        `https://github.com/hydralauncher/hydra-common-redist/raw/refs/heads/main/${redist}`,
-        {
-          responseType: "arraybuffer",
-        }
-      );
-
-      await fs.promises.writeFile(filePath, response.data);
+      // Common redistributable download removed - no longer using Hydra's repository
+      // TODO: Host your own common redistributables or use a different source
+      logger.info(`Skipping download of ${redist} - no source configured`);
     }
   }
 }

@@ -3,14 +3,11 @@ import type {
   Game,
   GameShop,
   UnlockedAchievement,
-  UpdatedUnlockedAchievements,
   UserPreferences,
 } from "@types";
 import { WindowManager } from "../window-manager";
-import { HydraApi } from "../hydra-api";
 import { getUnlockedAchievements } from "@main/events/user/get-unlocked-achievements";
 import { publishNewAchievementNotification } from "../notifications";
-import { SubscriptionRequiredError } from "@shared";
 import { achievementsLogger } from "../logger";
 import { db, gameAchievementsSublevel, levelKeys } from "@main/level";
 import { getGameAchievementData } from "./get-game-achievement-data";
@@ -159,62 +156,15 @@ export const mergeAchievements = async (
     }
   }
 
-  const shouldSyncWithRemote =
-    game.remoteId &&
-    (newAchievements.length || AchievementWatcherManager.hasFinishedPreSearch);
-
-  if (shouldSyncWithRemote) {
-    await HydraApi.put<UpdatedUnlockedAchievements | undefined>(
-      "/profile/games/achievements",
-      {
-        id: game.remoteId,
-        achievements: mergedLocalAchievements,
-      },
-      { needsSubscription: !newAchievements.length }
-    )
-      .then((response) => {
-        if (response) {
-          return saveAchievementsOnLocal(
-            response.objectId,
-            response.shop,
-            response.achievements,
-            publishNotification
-          );
-        }
-
-        return saveAchievementsOnLocal(
-          game.objectId,
-          game.shop,
-          mergedLocalAchievements,
-          publishNotification
-        );
-      })
-      .catch((err) => {
-        if (err instanceof SubscriptionRequiredError) {
-          achievementsLogger.log(
-            "Achievements not synchronized on API due to lack of subscription",
-            game.objectId,
-            game.title
-          );
-        }
-
-        return saveAchievementsOnLocal(
-          game.objectId,
-          game.shop,
-          mergedLocalAchievements,
-          publishNotification
-        );
-      })
-      .finally(() => {
-        AchievementWatcherManager.alreadySyncedGames.set(gameKey, true);
-      });
-  } else if (newAchievements.length) {
+  // Cloud sync disabled - achievements are now only stored locally
+  if (newAchievements.length) {
     await saveAchievementsOnLocal(
       game.objectId,
       game.shop,
       mergedLocalAchievements,
       publishNotification
     );
+    AchievementWatcherManager.alreadySyncedGames.set(gameKey, true);
   }
 
   return newAchievements.length;

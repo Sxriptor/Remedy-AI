@@ -5,8 +5,9 @@ import { Link } from "../link/link";
 import "./auto-update-header.scss";
 import type { AppUpdaterEvent } from "@types";
 
+// Update to your own GitHub repository releases page
 export const releasesPageUrl =
-  "https://github.com/hydralauncher/hydra/releases/latest";
+  "https://github.com/Sxriptor/Remedy-AI/releases/latest";
 
 export function AutoUpdateSubHeader() {
   const [isReadyToInstall, setIsReadyToInstall] = useState(false);

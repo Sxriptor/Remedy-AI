@@ -120,12 +120,8 @@ export function GameReviews({
     if (!objectId || !userDetailsId) return;
 
     try {
-      const response = await window.electron.hydraApi.get<{
-        hasReviewed: boolean;
-      }>(`/games/${shop}/${objectId}/reviews/check`, {
-        needsAuth: true,
-      });
-      const hasReviewed = response?.hasReviewed || false;
+      // Review check removed - no longer using Hydra API
+      const hasReviewed = false;
       onUserReviewedChange(hasReviewed);
 
       const twoHoursInMilliseconds = 2 * 60 * 60 * 1000;
@@ -158,28 +154,13 @@ export function GameReviews({
 
       setReviewsLoading(true);
       try {
-        const skip = reset ? 0 : reviewsPage * 20;
-        const params = new URLSearchParams({
-          take: "20",
-          skip: skip.toString(),
-          sortBy: reviewsSortBy,
-          language: i18n.language,
-        });
-
-        const response = await window.electron.hydraApi.get(
-          `/games/${shop}/${objectId}/reviews?${params.toString()}`,
-          { needsAuth: false }
-        );
+        // Reviews loading removed - no longer using Hydra API
+        const reviewsData: GameReview[] = [];
+        const reviewCount = 0;
 
         if (abortController.signal.aborted) {
           return;
         }
-
-        const typedResponse = response as unknown as
-          | { reviews: GameReview[]; totalCount: number }
-          | undefined;
-        const reviewsData = typedResponse?.reviews || [];
-        const reviewCount = typedResponse?.totalCount || 0;
 
         if (reset) {
           setReviews(reviewsData);
@@ -259,10 +240,8 @@ export function GameReviews({
     setReviews(updatedReviews);
 
     try {
-      await window.electron.hydraApi.put(
-        `/games/${shop}/${objectId}/reviews/${reviewId}/${voteType}`,
-        { data: {} }
-      );
+      // Review voting removed - no longer using Hydra API
+      console.log(`Review voting not implemented for review ${reviewId}`);
     } catch (error) {
       console.error(`Failed to ${voteType} review:`, error);
 
@@ -286,9 +265,8 @@ export function GameReviews({
     if (!objectId) return;
 
     try {
-      await window.electron.hydraApi.delete(
-        `/games/${shop}/${objectId}/reviews/${reviewId}`
-      );
+      // Review deletion removed - no longer using Hydra API
+      console.log(`Review deletion not implemented for review ${reviewId}`);
       loadReviews(true);
       onUserReviewedChange(false);
       setShowReviewForm(true);
@@ -300,7 +278,6 @@ export function GameReviews({
   };
 
   const handleSubmitReview = async () => {
-    const reviewHtml = editor?.getHTML() || "";
     const reviewText = editor?.getText() || "";
 
     if (!objectId) return;
@@ -321,15 +298,8 @@ export function GameReviews({
     setSubmittingReview(true);
 
     try {
-      await window.electron.hydraApi.post(
-        `/games/${shop}/${objectId}/reviews`,
-        {
-          data: {
-            reviewHtml,
-            score: reviewScore,
-          },
-        }
-      );
+      // Review submission removed - no longer using Hydra API
+      console.log(`Review submission not implemented for game ${objectId}`);
 
       editor?.commands.clearContent();
       setReviewScore(null);

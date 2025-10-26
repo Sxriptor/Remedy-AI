@@ -4,7 +4,6 @@ import { useTranslation } from "react-i18next";
 import { useDate, useToast, useUserDetails } from "@renderer/hooks";
 import { useCallback, useContext, useEffect, useState } from "react";
 import {
-  CloudIcon,
   KeyIcon,
   MailIcon,
   XCircleFillIcon,
@@ -92,6 +91,8 @@ export function SettingsAccount() {
     [unblockUser, fetchBlockedUsers, t, showSuccessToast]
   );
 
+  // Cloud subscription removed - not using Hydra Cloud
+  // @ts-ignore - keeping function for potential future use
   const getHydraCloudSectionContent = () => {
     const hasSubscribedBefore = Boolean(userDetails?.subscription?.expiresAt);
     const isRenewalActive = userDetails?.subscription?.status === "active";
@@ -198,22 +199,6 @@ export function SettingsAccount() {
             {t("update_password")}
           </Button>
         </div>
-      </section>
-
-      <section className="settings-account__section">
-        <h3>Hydra Cloud</h3>
-        <div className="settings-account__subscription-info">
-          {getHydraCloudSectionContent().description}
-        </div>
-
-        <Button
-          className="settings-account__subscription-button"
-          theme="outline"
-          onClick={() => window.electron.openCheckout()}
-        >
-          <CloudIcon />
-          {getHydraCloudSectionContent().callToAction}
-        </Button>
       </section>
 
       <section className="settings-account__section">

@@ -53,14 +53,10 @@ export function ReportProfile() {
   }, [userProfile, reset]);
 
   const onSubmit = useCallback(
-    async (values: FormValues) => {
-      return window.electron.hydraApi
-        .post(`/users/${userProfile!.id}/report`, {
-          data: {
-            reason: values.reason,
-            description: values.description,
-          },
-        })
+    async (_values: FormValues) => {
+      // Profile reporting removed - no longer using Hydra API
+      console.log(`Profile reporting not implemented for user ${userProfile!.id}`);
+      return Promise.resolve()
         .then(() => {
           showSuccessToast(t("profile_reported"));
           setShowReportProfileModal(false);

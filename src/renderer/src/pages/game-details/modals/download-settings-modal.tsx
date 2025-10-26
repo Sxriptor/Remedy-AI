@@ -86,10 +86,6 @@ export function DownloadSettingsModal({
     (availableDownloaders: Downloader[]) => {
       if (availableDownloaders.length === 0) return null;
 
-      if (availableDownloaders.includes(Downloader.Hydra)) {
-        return Downloader.Hydra;
-      }
-
       if (availableDownloaders.includes(Downloader.RealDebrid)) {
         return Downloader.RealDebrid;
       }
@@ -117,8 +113,6 @@ export function DownloadSettingsModal({
         return userPreferences?.realDebridApiToken;
       if (downloader === Downloader.TorBox)
         return userPreferences?.torBoxApiToken;
-      if (downloader === Downloader.Hydra)
-        return isFeatureEnabled(Feature.Nimbus);
       return true;
     });
 
@@ -192,9 +186,7 @@ export function DownloadSettingsModal({
                 (downloader === Downloader.RealDebrid &&
                   !userPreferences?.realDebridApiToken) ||
                 (downloader === Downloader.TorBox &&
-                  !userPreferences?.torBoxApiToken) ||
-                (downloader === Downloader.Hydra &&
-                  !isFeatureEnabled(Feature.Nimbus));
+                  !userPreferences?.torBoxApiToken);
 
               return (
                 <Button

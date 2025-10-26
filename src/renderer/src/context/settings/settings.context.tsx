@@ -116,14 +116,8 @@ export function SettingsContextProvider({
   }, []);
 
   const fetchBlockedUsers = useCallback(async () => {
-    const blockedUsers = await window.electron.hydraApi
-      .get<UserBlocks>("/profile/blocks", {
-        params: { take: 12, skip: 0 },
-      })
-      .catch(() => {
-        return { blocks: [] };
-      });
-    setBlockedUsers(blockedUsers.blocks);
+    // Blocked users removed - no longer using Hydra API
+    setBlockedUsers([]);
   }, []);
 
   useEffect(() => {

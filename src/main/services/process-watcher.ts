@@ -1,13 +1,11 @@
 import { WindowManager } from "./window-manager";
 import { createGame, updateGamePlaytime } from "./library-sync";
 import type { Game, GameRunning } from "@types";
-import { PythonRPC } from "./python-rpc";
+// Python RPC removed - process watching disabled
 import axios from "axios";
-import { ProcessPayload } from "./download/types";
 import { gamesSublevel, levelKeys } from "@main/level";
 import { CloudSync } from "./cloud-sync";
 import { logger } from "./logger";
-import path from "path";
 import { AchievementWatcherManager } from "./achievements/achievement-watcher-manager";
 import { MAIN_LOOP_INTERVAL } from "@main/constants";
 
@@ -114,30 +112,10 @@ const findGamePathByProcess = async (
 };
 
 const getSystemProcessMap = async () => {
-  const processes =
-    (await PythonRPC.rpc.get<ProcessPayload[] | null>("/process-list")).data ||
-    [];
-
+  // Process watching removed - Python RPC no longer available
+  // TODO: Implement direct process management without Python
   const processMap = new Map<string, Set<string>>();
   const winePrefixMap = new Map<string, string>();
-
-  processes.forEach((process) => {
-    const key = process.name?.toLowerCase();
-    const value =
-      platform === "win32"
-        ? process.exe
-        : path.join(process.cwd ?? "", process.name ?? "");
-
-    if (!key || !value) return;
-
-    const STEAM_COMPAT_DATA_PATH = process.environ?.STEAM_COMPAT_DATA_PATH;
-    if (STEAM_COMPAT_DATA_PATH) {
-      winePrefixMap.set(value, STEAM_COMPAT_DATA_PATH);
-    }
-
-    const currentSet = processMap.get(key) ?? new Set();
-    processMap.set(key, currentSet.add(value));
-  });
 
   return { processMap, winePrefixMap };
 };

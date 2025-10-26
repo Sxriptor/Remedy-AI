@@ -1,21 +1,10 @@
 import type { Game } from "@types";
-import { HydraApi } from "../hydra-api";
-import { gamesSublevel, levelKeys } from "@main/level";
 
-export const createGame = async (game: Game) => {
-  return HydraApi.post(`/profile/games`, {
-    objectId: game.objectId,
-    playTimeInMilliseconds: Math.trunc(game.playTimeInMilliseconds ?? 0),
-    shop: game.shop,
-    lastTimePlayed: game.lastTimePlayed,
-  }).then((response) => {
-    const { id: remoteId, playTimeInMilliseconds, lastTimePlayed } = response;
-
-    gamesSublevel.put(levelKeys.game(game.shop, game.objectId), {
-      ...game,
-      remoteId,
-      playTimeInMilliseconds,
-      lastTimePlayed,
-    });
-  });
+/**
+ * Cloud sync has been disabled.
+ * Games are now only created locally.
+ */
+export const createGame = async (_game: Game) => {
+  // Stub: No longer creating games on remote server
+  return Promise.resolve();
 };

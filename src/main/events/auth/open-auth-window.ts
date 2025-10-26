@@ -1,6 +1,6 @@
 import i18next from "i18next";
 import { registerEvent } from "../register-event";
-import { HydraApi, WindowManager } from "@main/services";
+import { WindowManager } from "@main/services";
 import { AuthPage } from "@shared";
 
 const openAuthWindow = async (
@@ -12,10 +12,13 @@ const openAuthWindow = async (
   });
 
   if ([AuthPage.UpdateEmail, AuthPage.UpdatePassword].includes(page)) {
-    const { accessToken } = await HydraApi.refreshToken().catch(() => {
-      return { accessToken: "" };
-    });
-    searchParams.set("token", accessToken);
+    try {
+      // Token refresh not implemented yet - configure your auth backend
+      const accessToken = "";
+      searchParams.set("token", accessToken);
+    } catch (err) {
+      // Handle auth error
+    }
   }
 
   WindowManager.openAuthWindow(page, searchParams);

@@ -1,10 +1,9 @@
-appId: gg.hydralauncher.hydra
-productName: Hydra
+appId: com.remedy.app
+productName: Remedy
 directories:
   buildResources: build
 extraResources:
   - ludusavi
-  - hydra-python-rpc
   - seeds
   - from: node_modules/create-desktop-shortcuts/src/windows.vbs
   - from: resources/achievement.wav
@@ -18,7 +17,7 @@ files:
 asarUnpack:
   - resources/**
 win:
-  executableName: Hydra
+  executableName: Remedy
   extraResources:
     - from: binaries/aria2c.exe
     - from: binaries/7z.exe
@@ -60,13 +59,13 @@ linux:
   maintainer: electronjs.org
   category: Game
   mimeTypes:
-    - x-scheme-handler/hydralauncher
+    - x-scheme-handler/remedy
 appImage:
   artifactName: ${name}-${version}.${ext}
 npmRebuild: false
 publish:
   provider: github
-  owner: hydralauncher
-  repo: hydra
+  owner: Sxriptor
+  repo: Remedy-AI
 electronDownload:
   mirror: https://npmmirror.com/mirrors/electron/

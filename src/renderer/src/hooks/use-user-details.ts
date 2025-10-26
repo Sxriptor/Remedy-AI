@@ -11,7 +11,6 @@ import type {
   FriendRequestAction,
   UpdateProfileRequest,
   UserDetails,
-  FriendRequest,
 } from "@types";
 import { UserFriendModalTab } from "@renderer/pages/shared-modals/user-friend-modal";
 
@@ -82,8 +81,8 @@ export function useUserDetails() {
   );
 
   const fetchFriendRequests = useCallback(async () => {
-    return window.electron.hydraApi
-      .get<FriendRequest[]>("/profile/friend-requests")
+    // Friend requests removed - no longer using Hydra API
+    return Promise.resolve([])
       .then((friendRequests) => {
         window.electron.syncFriendRequests();
         dispatch(setFriendRequests(friendRequests));
@@ -105,42 +104,34 @@ export function useUserDetails() {
 
   const sendFriendRequest = useCallback(
     async (userId: string) => {
-      return window.electron.hydraApi
-        .post("/profile/friend-requests", {
-          data: { friendCode: userId },
-        })
-        .then(() => fetchFriendRequests());
+      // Friend requests removed - no longer using Hydra API
+      console.log(`Friend request not implemented for user ${userId}`);
+      return Promise.resolve().then(() => fetchFriendRequests());
     },
     [fetchFriendRequests]
   );
 
   const updateFriendRequestState = useCallback(
     async (userId: string, action: FriendRequestAction) => {
-      if (action === "CANCEL") {
-        return window.electron.hydraApi
-          .delete(`/profile/friend-requests/${userId}`)
-          .then(() => fetchFriendRequests());
-      }
-
-      return window.electron.hydraApi
-        .patch(`/profile/friend-requests/${userId}`, {
-          data: {
-            requestState: action,
-          },
-        })
-        .then(() => fetchFriendRequests());
+      // Friend request updates removed - no longer using Hydra API
+      console.log(`Friend request ${action} not implemented for user ${userId}`);
+      return Promise.resolve().then(() => fetchFriendRequests());
     },
     [fetchFriendRequests]
   );
 
-  const undoFriendship = (userId: string) =>
-    window.electron.hydraApi.delete(`/profile/friends/${userId}`);
+  // Friend/block management removed - no longer using Hydra API
+  const undoFriendship = async (userId: string) => {
+    console.log(`Friendship removal not implemented for user ${userId}`);
+  };
 
-  const blockUser = (userId: string) =>
-    window.electron.hydraApi.post(`/users/${userId}/block`);
+  const blockUser = async (userId: string) => {
+    console.log(`User blocking not implemented for user ${userId}`);
+  };
 
-  const unblockUser = (userId: string) =>
-    window.electron.hydraApi.post(`/users/${userId}/unblock`);
+  const unblockUser = async (userId: string) => {
+    console.log(`User unblocking not implemented for user ${userId}`);
+  };
 
   const hasActiveSubscription = useMemo(() => {
     const expiresAt = new Date(userDetails?.subscription?.expiresAt ?? 0);

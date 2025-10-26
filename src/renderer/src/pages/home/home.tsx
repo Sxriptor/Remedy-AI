@@ -40,17 +40,9 @@ export default function Home() {
       setCurrentCatalogueCategory(category);
       setIsLoading(true);
 
-      const params = new URLSearchParams({
-        take: "12",
-        skip: "0",
-      });
-
-      const catalogue = await window.electron.hydraApi.get<ShopAssets[]>(
-        `/catalogue/${category}?${params.toString()}`,
-        { needsAuth: false }
-      );
-
-      setCatalogue((prev) => ({ ...prev, [category]: catalogue }));
+      // Catalogue fetching removed - no longer using Hydra API
+      // TODO: Implement your own catalogue source
+      setCatalogue((prev) => ({ ...prev, [category]: [] }));
     } finally {
       setIsLoading(false);
     }

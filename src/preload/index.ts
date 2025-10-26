@@ -32,10 +32,7 @@ contextBridge.exposeInMainWorld("electron", {
     ipcRenderer.invoke("pauseGameDownload", shop, objectId),
   resumeGameDownload: (shop: GameShop, objectId: string) =>
     ipcRenderer.invoke("resumeGameDownload", shop, objectId),
-  pauseGameSeed: (shop: GameShop, objectId: string) =>
-    ipcRenderer.invoke("pauseGameSeed", shop, objectId),
-  resumeGameSeed: (shop: GameShop, objectId: string) =>
-    ipcRenderer.invoke("resumeGameSeed", shop, objectId),
+  // Seeding removed - torrents no longer supported
   onDownloadProgress: (cb: (value: DownloadProgress | null) => void) => {
     const listener = (
       _event: Electron.IpcRendererEvent,
@@ -347,98 +344,11 @@ contextBridge.exposeInMainWorld("electron", {
   isStaging: () => ipcRenderer.invoke("isStaging"),
   isPortableVersion: () => ipcRenderer.invoke("isPortableVersion"),
   openExternal: (src: string) => ipcRenderer.invoke("openExternal", src),
-  openCheckout: () => ipcRenderer.invoke("openCheckout"),
   showOpenDialog: (options: Electron.OpenDialogOptions) =>
     ipcRenderer.invoke("showOpenDialog", options),
   showItemInFolder: (path: string) =>
     ipcRenderer.invoke("showItemInFolder", path),
-  hydraApi: {
-    get: (
-      url: string,
-      options?: {
-        params?: unknown;
-        needsAuth?: boolean;
-        needsSubscription?: boolean;
-        ifModifiedSince?: Date;
-      }
-    ) =>
-      ipcRenderer.invoke("hydraApiCall", {
-        method: "get",
-        url,
-        params: options?.params,
-        options: {
-          needsAuth: options?.needsAuth,
-          needsSubscription: options?.needsSubscription,
-          ifModifiedSince: options?.ifModifiedSince,
-        },
-      }),
-    post: (
-      url: string,
-      options?: {
-        data?: unknown;
-        needsAuth?: boolean;
-        needsSubscription?: boolean;
-      }
-    ) =>
-      ipcRenderer.invoke("hydraApiCall", {
-        method: "post",
-        url,
-        data: options?.data,
-        options: {
-          needsAuth: options?.needsAuth,
-          needsSubscription: options?.needsSubscription,
-        },
-      }),
-    put: (
-      url: string,
-      options?: {
-        data?: unknown;
-        needsAuth?: boolean;
-        needsSubscription?: boolean;
-      }
-    ) =>
-      ipcRenderer.invoke("hydraApiCall", {
-        method: "put",
-        url,
-        data: options?.data,
-        options: {
-          needsAuth: options?.needsAuth,
-          needsSubscription: options?.needsSubscription,
-        },
-      }),
-    patch: (
-      url: string,
-      options?: {
-        data?: unknown;
-        needsAuth?: boolean;
-        needsSubscription?: boolean;
-      }
-    ) =>
-      ipcRenderer.invoke("hydraApiCall", {
-        method: "patch",
-        url,
-        data: options?.data,
-        options: {
-          needsAuth: options?.needsAuth,
-          needsSubscription: options?.needsSubscription,
-        },
-      }),
-    delete: (
-      url: string,
-      options?: {
-        needsAuth?: boolean;
-        needsSubscription?: boolean;
-      }
-    ) =>
-      ipcRenderer.invoke("hydraApiCall", {
-        method: "delete",
-        url,
-        options: {
-          needsAuth: options?.needsAuth,
-          needsSubscription: options?.needsSubscription,
-        },
-      }),
-  },
+  // Hydra API removed - no longer making calls to Hydra servers
   canInstallCommonRedist: () => ipcRenderer.invoke("canInstallCommonRedist"),
   installCommonRedist: () => ipcRenderer.invoke("installCommonRedist"),
   installHydraDeckyPlugin: () => ipcRenderer.invoke("installHydraDeckyPlugin"),

@@ -1,16 +1,12 @@
 import { registerEvent } from "../register-event";
-import { PythonRPC } from "@main/services/python-rpc";
+// Python RPC removed - profile image processing disabled
 
 const processProfileImage = async (
   _event: Electron.IpcMainInvokeEvent,
-  path: string
+  _path: string
 ) => {
-  return PythonRPC.rpc
-    .post<{
-      imagePath: string;
-      mimeType: string;
-    }>("/profile-image", { image_path: path })
-    .then((response) => response.data);
+  // Profile image processing removed - Python RPC no longer available
+  throw new Error("Profile image processing not implemented");
 };
 
 registerEvent("processProfileImage", processProfileImage);

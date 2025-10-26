@@ -79,14 +79,8 @@ export function Sidebar() {
     if (objectId) {
       setHowLongToBeat({ isLoading: true, data: null });
 
-      // Directly fetch from API without checking cache
-      window.electron.hydraApi
-        .get<HowLongToBeatCategory[] | null>(
-          `/games/${shop}/${objectId}/how-long-to-beat`,
-          {
-            needsAuth: false,
-          }
-        )
+      // HowLongToBeat removed - no longer using Hydra API
+      Promise.resolve(null)
         .then((howLongToBeatData) => {
           setHowLongToBeat({ isLoading: false, data: howLongToBeatData });
         })

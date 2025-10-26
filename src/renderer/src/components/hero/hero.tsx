@@ -18,13 +18,8 @@ export function Hero() {
   useEffect(() => {
     setIsLoading(true);
 
-    const language = i18n.language.split("-")[0];
-
-    window.electron.hydraApi
-      .get<TrendingGame[]>("/catalogue/featured", {
-        params: { language },
-        needsAuth: false,
-      })
+    // Featured games removed - no longer using Hydra API
+    Promise.resolve([])
       .then((result) => {
         setFeaturedGameDetails(result.slice(0, 1));
       })

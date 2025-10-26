@@ -21,13 +21,13 @@ export default function Downloads() {
   const [showBinaryNotFoundModal, setShowBinaryNotFoundModal] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
 
-  const { removeGameInstaller, pauseSeeding } = useDownload();
+  const { removeGameInstaller } = useDownload();
 
   const handleDeleteGame = async () => {
     if (gameToBeDeleted.current) {
       const [shop, objectId] = gameToBeDeleted.current;
 
-      await pauseSeeding(shop, objectId);
+      // Seeding removed - torrents no longer supported
       await removeGameInstaller(shop, objectId);
     }
   };

@@ -4,8 +4,6 @@ import { SystemPath } from "./services/system-path";
 
 export const defaultDownloadsPath = SystemPath.getPath("downloads");
 
-export const isStaging = import.meta.env.MAIN_VITE_API_URL.includes("staging");
-
 export const windowsStartMenuPath = path.join(
   SystemPath.getPath("appData"),
   "Microsoft",
@@ -18,7 +16,7 @@ export const publicProfilePath = "C:/Users/Public";
 
 export const levelDatabasePath = path.join(
   SystemPath.getPath("userData"),
-  `hydra-db${isStaging ? "-staging" : ""}`
+  "remedy-db"
 );
 
 export const commonRedistPath = path.join(
@@ -28,7 +26,7 @@ export const commonRedistPath = path.join(
 
 export const logsPath = path.join(
   SystemPath.getPath("userData"),
-  `logs${isStaging ? "-staging" : ""}`
+  "logs"
 );
 
 export const achievementSoundPath = app.isPackaged
@@ -37,7 +35,7 @@ export const achievementSoundPath = app.isPackaged
 
 export const backupsPath = path.join(SystemPath.getPath("userData"), "Backups");
 
-export const appVersion = app.getVersion() + (isStaging ? "-staging" : "");
+export const appVersion = app.getVersion();
 
 export const ASSETS_PATH = path.join(SystemPath.getPath("userData"), "Assets");
 
@@ -49,7 +47,7 @@ export const DECKY_PLUGINS_LOCATION = path.join(
   "plugins"
 );
 
-export const HYDRA_DECKY_PLUGIN_LOCATION = path.join(
+export const REMEDY_DECKY_PLUGIN_LOCATION = path.join(
   DECKY_PLUGINS_LOCATION,
-  "Hydra"
+  "Remedy"
 );

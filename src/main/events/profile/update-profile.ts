@@ -7,8 +7,12 @@ import { omit } from "lodash-es";
 import axios from "axios";
 import { fileTypeFromFile } from "file-type";
 
-export const patchUserProfile = async (updateProfile: UpdateProfileRequest) => {
-  return HydraApi.patch<UserProfile>("/profile", updateProfile);
+/**
+ * Cloud sync disabled - profile updates no longer sync to remote server
+ */
+export const patchUserProfile = async (_updateProfile: UpdateProfileRequest) => {
+  // Stub: Profile updates are now local-only
+  return {} as UserProfile;
 };
 
 const uploadImage = async (

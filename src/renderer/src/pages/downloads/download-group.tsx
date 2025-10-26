@@ -1,5 +1,4 @@
 import { useNavigate } from "react-router-dom";
-import cn from "classnames";
 
 import type { GameShop, LibraryGame, SeedingStatus } from "@types";
 
@@ -15,7 +14,7 @@ import { useAppSelector, useDownload, useLibrary } from "@renderer/hooks";
 
 import "./download-group.scss";
 import { useTranslation } from "react-i18next";
-import { useCallback, useMemo } from "react";
+import { useCallback } from "react";
 import {
   DropdownMenu,
   DropdownMenuItem,
@@ -24,12 +23,9 @@ import {
   ColumnsIcon,
   DownloadIcon,
   FileDirectoryIcon,
-  LinkIcon,
   PlayIcon,
-  QuestionIcon,
   ThreeBarsIcon,
   TrashIcon,
-  UnlinkIcon,
   XCircleIcon,
 } from "@primer/octicons-react";
 
@@ -46,7 +42,6 @@ export function DownloadGroup({
   title,
   openDeleteGameModal,
   openGameInstaller,
-  seedingStatus,
 }: Readonly<DownloadGroupProps>) {
   const navigate = useNavigate();
 
@@ -65,8 +60,6 @@ export function DownloadGroup({
     resumeDownload,
     cancelDownload,
     isGameDeleting,
-    pauseSeeding,
-    resumeSeeding,
   } = useDownload();
 
   const getFinalDownloadSize = (game: LibraryGame) => {
@@ -81,15 +74,7 @@ export function DownloadGroup({
     return "N/A";
   };
 
-  const seedingMap = useMemo(() => {
-    const map = new Map<string, SeedingStatus>();
-
-    seedingStatus.forEach((seed) => {
-      map.set(seed.gameId, seed);
-    });
-
-    return map;
-  }, [seedingStatus]);
+  // Seeding map removed - torrents no longer supported
 
   const extractGameDownload = useCallback(
     async (shop: GameShop, objectId: string) => {
@@ -104,7 +89,7 @@ export function DownloadGroup({
 
     const isGameDownloading = lastPacket?.gameId === game.id;
     const finalDownloadSize = getFinalDownloadSize(game);
-    const seedingStatus = seedingMap.get(game.id);
+    // Seeding removed - torrents no longer supported
 
     if (download.extracting) {
       return <p>{t("extracting")}</p>;
@@ -137,38 +122,14 @@ export function DownloadGroup({
             {finalDownloadSize}
           </p>
 
-          {download.downloader === Downloader.Torrent && (
-            <small
-              className="download-group__details-with-article"
-              data-open-article="peers-and-seeds"
-            >
-              {lastPacket?.numPeers} peers / {lastPacket?.numSeeds} seeds
-              <QuestionIcon size={12} />
-            </small>
-          )}
+          {/* Torrent-specific stats removed */}
         </>
       );
     }
 
     if (download.progress === 1) {
-      const uploadSpeed = formatBytes(seedingStatus?.uploadSpeed ?? 0);
-
-      return download.status === "seeding" &&
-        download.downloader === Downloader.Torrent ? (
-        <>
-          <p
-            data-open-article="seeding"
-            className="download-group__details-with-article"
-          >
-            {t("seeding")}
-
-            <QuestionIcon />
-          </p>
-          {uploadSpeed && <p>{uploadSpeed}/s</p>}
-        </>
-      ) : (
-        <p>{t("completed")}</p>
-      );
+      // Seeding removed - torrents no longer supported
+      return <p>{t("completed")}</p>;
     }
 
     if (download.status === "paused") {
@@ -219,28 +180,7 @@ export function DownloadGroup({
             extractGameDownload(game.shop, game.objectId);
           },
         },
-        {
-          label: t("stop_seeding"),
-          disabled: deleting,
-          icon: <UnlinkIcon />,
-          show:
-            game.download?.status === "seeding" &&
-            game.download?.downloader === Downloader.Torrent,
-          onClick: () => {
-            pauseSeeding(game.shop, game.objectId);
-          },
-        },
-        {
-          label: t("resume_seeding"),
-          disabled: deleting,
-          icon: <LinkIcon />,
-          show:
-            game.download?.status !== "seeding" &&
-            game.download?.downloader === Downloader.Torrent,
-          onClick: () => {
-            resumeSeeding(game.shop, game.objectId);
-          },
-        },
+        // Seeding options removed - torrents no longer supported
         {
           label: t("delete"),
           disabled: deleting,
@@ -311,10 +251,7 @@ export function DownloadGroup({
           return (
             <li
               key={game.id}
-              className={cn("download-group__item", {
-                "download-group__item--hydra":
-                  game.download?.downloader === Downloader.Hydra,
-              })}
+              className="download-group__item"
             >
               <div className="download-group__cover">
                 <div className="download-group__cover-backdrop">
@@ -366,10 +303,6 @@ export function DownloadGroup({
                   </DropdownMenu>
                 )}
               </div>
-
-              {game.download?.downloader === Downloader.Hydra && (
-                <div className="download-group__hydra-gradient" />
-              )}
             </li>
           );
         })}

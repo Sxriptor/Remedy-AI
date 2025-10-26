@@ -6,7 +6,7 @@ import fs from "node:fs";
 import os from "node:os";
 import type { GameShop, User } from "@types";
 import { backupsPath } from "@main/constants";
-import { HydraApi } from "./hydra-api";
+import { HydraApi } from "./api-client";
 import { normalizePath, parseRegFile } from "@main/helpers";
 import { logger } from "./logger";
 import { WindowManager } from "./window-manager";

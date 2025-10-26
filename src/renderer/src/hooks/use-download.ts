@@ -73,15 +73,7 @@ export function useDownload() {
       updateLibrary();
     });
 
-  const pauseSeeding = async (shop: GameShop, objectId: string) => {
-    await window.electron.pauseGameSeed(shop, objectId);
-    await updateLibrary();
-  };
-
-  const resumeSeeding = async (shop: GameShop, objectId: string) => {
-    await window.electron.resumeGameSeed(shop, objectId);
-    await updateLibrary();
-  };
+  // Seeding removed - torrents no longer supported
 
   const calculateETA = () => {
     if (!lastPacket || lastPacket.timeRemaining < 0) return "";
@@ -119,8 +111,6 @@ export function useDownload() {
     removeGameFromLibrary,
     removeGameInstaller,
     isGameDeleting,
-    pauseSeeding,
-    resumeSeeding,
     clearDownload: () => dispatch(clearDownload()),
     setLastPacket: (packet: DownloadProgress | null) =>
       dispatch(setLastPacket(packet)),

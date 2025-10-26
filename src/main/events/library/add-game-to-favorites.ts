@@ -1,6 +1,5 @@
 import { registerEvent } from "../register-event";
 import { gamesSublevel, levelKeys } from "@main/level";
-import { HydraApi } from "@main/services";
 import type { GameShop } from "@types";
 
 const addGameToFavorites = async (
@@ -13,8 +12,7 @@ const addGameToFavorites = async (
   const game = await gamesSublevel.get(gameKey);
   if (!game) return;
 
-  HydraApi.put(`/profile/games/${shop}/${objectId}/favorite`).catch(() => {});
-
+  // Cloud sync disabled - favorite status is now only stored locally
   try {
     await gamesSublevel.put(gameKey, {
       ...game,
