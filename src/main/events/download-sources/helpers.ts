@@ -27,7 +27,7 @@ export const getTitleHashMapping = async (): Promise<TitleHashMapping> => {
   if (titleHashMappingCache) {
     return titleHashMappingCache;
   }
-  
+
   titleHashMappingCache = {};
   return titleHashMappingCache;
 };
@@ -98,7 +98,7 @@ export const getSteamGames = async (): Promise<FormattedSteamGamesByLetter> => {
   if (steamGamesFormattedCache) {
     return steamGamesFormattedCache;
   }
-  
+
   steamGamesFormattedCache = {};
   return steamGamesFormattedCache;
 };
