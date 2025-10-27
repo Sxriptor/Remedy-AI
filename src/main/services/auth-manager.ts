@@ -141,7 +141,8 @@ class AuthManager {
                 data.user.user_metadata?.user_name ||
                 data.user.user_metadata?.preferred_username ||
                 null;
-              const githubAvatarUrl = data.user.user_metadata?.avatar_url || null;
+              const githubAvatarUrl =
+                data.user.user_metadata?.avatar_url || null;
               const displayName =
                 data.user.user_metadata?.full_name ||
                 data.user.user_metadata?.name ||

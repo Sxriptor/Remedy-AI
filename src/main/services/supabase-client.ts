@@ -4,7 +4,6 @@ import {
 } from "@supabase/supabase-js";
 import { logger } from "./logger";
 import { db } from "../level";
-import { levelKeys } from "../level/sublevels";
 
 /**
  * Supabase Client for Remedy
@@ -18,10 +17,9 @@ import { levelKeys } from "../level/sublevels";
 const ElectronStorage = {
   async getItem(key: string): Promise<string | null> {
     try {
-      const value = await db.get<string, string>(
-        `supabase_${key}`,
-        { valueEncoding: "utf8" }
-      );
+      const value = await db.get<string, string>(`supabase_${key}`, {
+        valueEncoding: "utf8",
+      });
       return value;
     } catch (error) {
       // Key doesn't exist
@@ -30,11 +28,9 @@ const ElectronStorage = {
   },
   async setItem(key: string, value: string): Promise<void> {
     try {
-      await db.put<string, string>(
-        `supabase_${key}`,
-        value,
-        { valueEncoding: "utf8" }
-      );
+      await db.put<string, string>(`supabase_${key}`, value, {
+        valueEncoding: "utf8",
+      });
     } catch (error) {
       logger.error("Error storing session:", error);
     }
@@ -72,7 +68,9 @@ export const initializeSupabase = () => {
       },
     });
 
-    logger.info("Supabase client initialized successfully with persistent storage");
+    logger.info(
+      "Supabase client initialized successfully with persistent storage"
+    );
 
     // Check if there's an existing session and log it
     supabaseClient.auth.getSession().then(({ data: { session }, error }) => {

@@ -7,6 +7,7 @@ You now have **complete persistent authentication** that saves both user data AN
 ## What Was Implemented
 
 ### 🎯 Part 1: User Data Storage (Previous)
+
 - ✅ Store GitHub avatar URL
 - ✅ Store GitHub username
 - ✅ Store user email
@@ -14,6 +15,7 @@ You now have **complete persistent authentication** that saves both user data AN
 - ✅ Persist user data across restarts
 
 ### 🎯 Part 2: Session Token Storage (New)
+
 - ✅ Custom storage adapter for Supabase
 - ✅ Store access tokens in level database
 - ✅ Store refresh tokens in level database
@@ -24,6 +26,7 @@ You now have **complete persistent authentication** that saves both user data AN
 ## How It Works Now
 
 ### 1️⃣ User Signs In
+
 ```
 1. Click "Sign in with GitHub"
 2. Complete OAuth in browser
@@ -34,6 +37,7 @@ You now have **complete persistent authentication** that saves both user data AN
 ```
 
 ### 2️⃣ User Closes App
+
 ```
 1. App closes
 2. Session tokens remain in database ← This is the key!
@@ -41,6 +45,7 @@ You now have **complete persistent authentication** that saves both user data AN
 ```
 
 ### 3️⃣ User Reopens App
+
 ```
 1. App starts
 2. Supabase client initialized with custom storage
@@ -51,6 +56,7 @@ You now have **complete persistent authentication** that saves both user data AN
 ```
 
 ### 4️⃣ Token Expires (After ~1 hour)
+
 ```
 1. Supabase detects expired token
 2. Uses refresh token to get new access token ← Automatic!
@@ -59,6 +65,7 @@ You now have **complete persistent authentication** that saves both user data AN
 ```
 
 ### 5️⃣ User Signs Out
+
 ```
 1. Click sign out
 2. Session deleted from Supabase
@@ -71,6 +78,7 @@ You now have **complete persistent authentication** that saves both user data AN
 ## Key Files Modified
 
 ### Main Changes
+
 1. **`src/main/services/supabase-client.ts`**
    - Added `ElectronStorage` custom storage adapter
    - Stores sessions in level database with key `"supabase_auth-token"`
@@ -94,6 +102,7 @@ You now have **complete persistent authentication** that saves both user data AN
 ## Testing Instructions
 
 ### ✅ Test Persistent Login
+
 ```bash
 1. Start the app
 2. Sign in with GitHub
@@ -106,6 +115,7 @@ You now have **complete persistent authentication** that saves both user data AN
 ```
 
 ### ✅ Test Sign-Out
+
 ```bash
 1. While logged in, click sign out
 2. Verify sidebar shows "Sign In" button
@@ -115,6 +125,7 @@ You now have **complete persistent authentication** that saves both user data AN
 ```
 
 ### ✅ Test Multiple Restarts
+
 ```bash
 1. Sign in
 2. Close and reopen 5 times
@@ -125,6 +136,7 @@ You now have **complete persistent authentication** that saves both user data AN
 ## What's Stored in Database
 
 ### Session Data
+
 - **Key:** `"supabase_auth-token"`
 - **Contains:**
   - Access token (JWT)
@@ -132,7 +144,8 @@ You now have **complete persistent authentication** that saves both user data AN
   - Expiry time
   - User metadata
 
-### User Data  
+### User Data
+
 - **Key:** `"user"`
 - **Contains:**
   - GitHub username
@@ -160,6 +173,7 @@ You now have **complete persistent authentication** that saves both user data AN
 ## Before vs After
 
 ### ❌ Before
+
 ```
 App Start → Check session → No session → Show login → User signs in
 Close app
@@ -167,6 +181,7 @@ App Start → Check session → No session → Show login → User signs in AGAI
 ```
 
 ### ✅ After
+
 ```
 App Start → Check session → No session → Show login → User signs in
 Close app
@@ -179,6 +194,7 @@ App Start → Check session → Session found! → User logged in → Show home 
 ## Security Notes
 
 ✅ **Secure:**
+
 - Tokens stored locally in app-specific database
 - Not accessible to other apps
 - Not exposed in browser
@@ -186,11 +202,13 @@ App Start → Check session → Session found! → User logged in → Show home 
 - Uses standard OAuth flow
 
 ✅ **Automatic Refresh:**
+
 - Expired tokens automatically refreshed
 - No user intervention needed
 - Seamless experience
 
 ✅ **Clean Logout:**
+
 - Sign-out removes ALL authentication data
 - No orphaned sessions
 - Fresh state for next sign-in
@@ -198,6 +216,7 @@ App Start → Check session → Session found! → User logged in → Show home 
 ## Ready to Use! 🚀
 
 Your app now has **production-ready persistent authentication**:
+
 - ✅ Users stay logged in across app restarts
 - ✅ Tokens automatically refresh
 - ✅ GitHub avatar and name displayed
@@ -207,4 +226,3 @@ Your app now has **production-ready persistent authentication**:
 - ✅ No additional setup needed!
 
 Just build and run your app - authentication persistence works automatically!
-
