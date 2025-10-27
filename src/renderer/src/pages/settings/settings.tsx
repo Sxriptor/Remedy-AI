@@ -8,8 +8,8 @@ import {
   SettingsContextProvider,
 } from "@renderer/context";
 import { SettingsAccount } from "./settings-account";
-import { useUserDetails } from "@renderer/hooks";
-import { useMemo } from "react";
+import { useUserDetails, useToast } from "@renderer/hooks";
+import { useMemo, useState, useCallback } from "react";
 import "./settings.scss";
 import { SettingsAppearance } from "./aparence/settings-appearance";
 import { SettingsDebrid } from "./settings-debrid";
@@ -18,6 +18,28 @@ export default function Settings() {
   const { t } = useTranslation("settings");
 
   const { userDetails } = useUserDetails();
+  const { showSuccessToast } = useToast();
+  const [isScanning, setIsScanning] = useState(false);
+
+  const handleScan = useCallback(async () => {
+    setIsScanning(true);
+
+    try {
+      const result = await window.electron.scanInstalledApps();
+
+      if (result.success && result.addedCount > 0) {
+        showSuccessToast(
+          t("scan_complete", { count: result.addedCount })
+        );
+      } else if (result.success) {
+        showSuccessToast(t("scan_complete_no_apps"));
+      }
+    } catch (error) {
+      console.error("Scan error:", error);
+    } finally {
+      setIsScanning(false);
+    }
+  }, [t, showSuccessToast]);
 
   const categories = useMemo(() => {
     const categories = [
@@ -82,6 +104,13 @@ export default function Settings() {
                       {category.tabLabel}
                     </Button>
                   ))}
+                  <Button
+                    theme="blue"
+                    onClick={handleScan}
+                    disabled={isScanning}
+                  >
+                    {isScanning ? t("scanning") : t("scan")}
+                  </Button>
                 </section>
 
                 <h2>{categories[currentCategoryIndex].contentTitle}</h2>

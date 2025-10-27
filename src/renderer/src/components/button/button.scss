@@ -60,4 +60,17 @@
       background-color: #b3203f;
     }
   }
+
+  &--blue {
+    background-color: globals.$brand-blue;
+    color: globals.$muted-color;
+
+    &:hover {
+      background-color: #2d4a8c;
+    }
+
+    &:disabled {
+      background-color: globals.$brand-blue;
+    }
+  }
 }

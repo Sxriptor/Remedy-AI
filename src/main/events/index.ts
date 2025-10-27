@@ -36,6 +36,7 @@ import "./library/get-default-wine-prefix-selection-path";
 import "./library/cleanup-unused-assets";
 import "./library/create-steam-shortcut";
 import "./library/copy-custom-game-asset";
+import "./library/scan-installed-apps";
 import "./misc/open-external";
 import "./misc/show-open-dialog";
 import "./misc/show-item-in-folder";
