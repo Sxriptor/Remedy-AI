@@ -7,7 +7,8 @@ Enhanced the profile page to display the user's GitHub bio/description and socia
 ## Features Added
 
 When viewing your own profile, the page now displays:
-- ✅ **GitHub Avatar** 
+
+- ✅ **GitHub Avatar**
 - ✅ **Display Name**
 - ✅ **GitHub Username** (@username)
 - ✅ **GitHub Bio** (description) - NEW!
@@ -21,11 +22,13 @@ When viewing your own profile, the page now displays:
 ### 1. **Created GitHub API Service** (`src/main/services/github-api.ts`)
 
 New service to fetch public GitHub user data:
+
 ```typescript
-export async function fetchGitHubUserData(username: string)
+export async function fetchGitHubUserData(username: string);
 ```
 
 **Features:**
+
 - Fetches from `https://api.github.com/users/{username}`
 - Uses GitHub API v3
 - Extracts: bio, blog, twitter_username, company, location
@@ -33,6 +36,7 @@ export async function fetchGitHubUserData(username: string)
 - Logs all operations
 
 **Why Public API?**
+
 - No authentication token needed
 - Works immediately after sign-in
 - GitHub provides generous rate limits for public data
@@ -41,7 +45,9 @@ export async function fetchGitHubUserData(username: string)
 ### 2. **Updated Type Definitions**
 
 #### User Type (`src/types/level.types.ts`)
+
 Added GitHub profile fields:
+
 ```typescript
 export interface User {
   // ... existing fields ...
@@ -54,20 +60,24 @@ export interface User {
 ```
 
 #### UserProfile Type (`src/types/index.ts`)
+
 Added same fields to UserProfile for consistency.
 
 ### 3. **Updated Authentication Handlers**
 
 #### Supabase Sign-In (`src/main/events/auth/supabase-signin.ts`)
+
 - Fetches GitHub data after successful OAuth
 - Stores bio and links with user data
 - Uses `fetchGitHubUserData()` function
 
 #### Auth Manager (`src/main/services/auth-manager.ts`)
+
 - Also fetches GitHub data on HTTP callback
 - Ensures consistency across both auth flows
 
 **Flow:**
+
 ```
 User signs in with GitHub
     ↓
@@ -83,6 +93,7 @@ Data available in profile
 ### 4. **Updated Profile Context** (`src/renderer/src/context/user-profile/user-profile.context.tsx`)
 
 Modified `getUserProfile()` to include GitHub fields:
+
 ```typescript
 githubBio: (userDetails as any).githubBio || null,
 githubBlog: (userDetails as any).githubBlog || null,
@@ -94,11 +105,12 @@ githubLocation: (userDetails as any).githubLocation || null,
 ### 5. **Updated ProfileHero Component** (`src/renderer/src/pages/profile/profile-hero/profile-hero.tsx`)
 
 Added GitHub info section:
+
 ```tsx
 <div className="profile-hero__github-info">
   {/* Bio */}
   <p className="profile-hero__github-bio">{userProfile.githubBio}</p>
-  
+
   {/* Links */}
   <div className="profile-hero__github-links">
     <span>📍 {location}</span>
@@ -110,6 +122,7 @@ Added GitHub info section:
 ```
 
 **Features:**
+
 - Conditional rendering (only shows if data exists)
 - Icons for visual clarity (📍🏢🔗🐦)
 - Clickable links for blog and Twitter
@@ -119,6 +132,7 @@ Added GitHub info section:
 ### 6. **Added Styling** (`src/renderer/src/pages/profile/profile-hero/profile-hero.scss`)
 
 New CSS classes:
+
 - `.profile-hero__github-info` - Container for bio and links
 - `.profile-hero__github-bio` - Bio text styling
 - `.profile-hero__github-links` - Flex container for links
@@ -126,6 +140,7 @@ New CSS classes:
 - `.profile-hero__github-link--clickable` - Hover effects for clickable links
 
 **Styling Features:**
+
 - Muted colors for secondary information
 - Text shadows for readability
 - Smooth hover transitions
@@ -160,6 +175,7 @@ New CSS classes:
 ## Data Flow
 
 ### Sign-In Flow
+
 ```
 1. User signs in with GitHub
 2. OAuth completes → get basic data
@@ -169,6 +185,7 @@ New CSS classes:
 ```
 
 ### Profile Display Flow
+
 ```
 1. Navigate to profile
 2. UserProfileContext loads user data
@@ -178,6 +195,7 @@ New CSS classes:
 ```
 
 ### Data Persistence
+
 ```
 - Stored in level database
 - Persists across app restarts
@@ -188,22 +206,26 @@ New CSS classes:
 ## GitHub API Details
 
 ### Endpoint Used
+
 ```
 GET https://api.github.com/users/{username}
 ```
 
 ### Headers
+
 ```
 Accept: application/vnd.github.v3+json
 User-Agent: Remedy-App
 ```
 
 ### Rate Limits
+
 - **Unauthenticated**: 60 requests per hour per IP
 - **Sufficient for our use**: Only called once per sign-in
 - **Graceful degradation**: If API fails, profile still works without extra data
 
 ### Response Fields Used
+
 - `bio` - User's bio/description
 - `blog` - Personal website/blog URL
 - `twitter_username` - Twitter handle (without @)
@@ -264,12 +286,14 @@ User-Agent: Remedy-App
 ## Error Handling
 
 ### GitHub API Failures
+
 - **Network error**: Logs error, continues without GitHub data
 - **Rate limit**: Logs error, continues without GitHub data
 - **Invalid username**: Logs error, continues without GitHub data
 - **No impact**: Profile still displays with basic info (avatar, name, username)
 
 ### Missing Data
+
 - Bio is null/empty → don't show bio section
 - No links → don't show links section
 - No GitHub data at all → don't show entire GitHub info section
@@ -278,6 +302,7 @@ User-Agent: Remedy-App
 ## Future Enhancements
 
 Potential additions:
+
 - GitHub pinned repositories display
 - GitHub stats (followers, repos, stars)
 - GitHub contribution graph
@@ -295,4 +320,3 @@ Potential additions:
 - Respects GitHub's terms of service
 - User-Agent header identifies our app
 - No sensitive data is stored or transmitted
-

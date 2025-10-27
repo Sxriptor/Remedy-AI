@@ -133,7 +133,8 @@ export function UserProfileContextProvider({
         githubUsername: userDetails.username,
         githubBio: (userDetails as any).githubBio || null,
         githubBlog: (userDetails as any).githubBlog || null,
-        githubTwitterUsername: (userDetails as any).githubTwitterUsername || null,
+        githubTwitterUsername:
+          (userDetails as any).githubTwitterUsername || null,
         githubCompany: (userDetails as any).githubCompany || null,
         githubLocation: (userDetails as any).githubLocation || null,
       };
