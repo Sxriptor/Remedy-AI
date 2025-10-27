@@ -106,7 +106,7 @@ const handleSupabaseCallback = async (
         "User";
 
       // Fetch additional GitHub data (bio, links, etc.)
-      let githubData = null;
+      let githubData: Awaited<ReturnType<typeof fetchGitHubUserData>> = null;
       if (githubUsername) {
         githubData = await fetchGitHubUserData(githubUsername);
       }
