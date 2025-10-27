@@ -3,6 +3,8 @@ import {
   SupabaseClient as SupabaseClientType,
 } from "@supabase/supabase-js";
 import { logger } from "./logger";
+import { db } from "../level";
+import { levelKeys } from "../level/sublevels";
 
 /**
  * Supabase Client for Remedy
@@ -11,6 +13,40 @@ import { logger } from "./logger";
  * - VITE_SUPABASE_URL
  * - VITE_SUPABASE_ANON_KEY
  */
+
+// Custom storage adapter for Electron using level database
+const ElectronStorage = {
+  async getItem(key: string): Promise<string | null> {
+    try {
+      const value = await db.get<string, string>(
+        `supabase_${key}`,
+        { valueEncoding: "utf8" }
+      );
+      return value;
+    } catch (error) {
+      // Key doesn't exist
+      return null;
+    }
+  },
+  async setItem(key: string, value: string): Promise<void> {
+    try {
+      await db.put<string, string>(
+        `supabase_${key}`,
+        value,
+        { valueEncoding: "utf8" }
+      );
+    } catch (error) {
+      logger.error("Error storing session:", error);
+    }
+  },
+  async removeItem(key: string): Promise<void> {
+    try {
+      await db.del(`supabase_${key}`);
+    } catch (error) {
+      logger.error("Error removing session:", error);
+    }
+  },
+};
 
 let supabaseClient: SupabaseClientType | null = null;
 
@@ -30,10 +66,25 @@ export const initializeSupabase = () => {
       auth: {
         persistSession: true,
         autoRefreshToken: true,
+        storage: ElectronStorage,
+        storageKey: "auth-token",
+        detectSessionInUrl: false, // Disable URL detection in Electron
       },
     });
 
-    logger.info("Supabase client initialized successfully");
+    logger.info("Supabase client initialized successfully with persistent storage");
+
+    // Check if there's an existing session and log it
+    supabaseClient.auth.getSession().then(({ data: { session }, error }) => {
+      if (error) {
+        logger.error("Error checking for existing session:", error);
+      } else if (session) {
+        logger.info("Restored existing session for user:", session.user.email);
+      } else {
+        logger.info("No existing session found - user needs to sign in");
+      }
+    });
+
     return supabaseClient;
   } catch (error) {
     logger.error("Failed to initialize Supabase client:", error);

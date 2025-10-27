@@ -3,6 +3,8 @@ import { getSupabaseClient } from "@main/services";
 import { registerEvent } from "../register-event";
 import { WindowManager } from "@main/services";
 import { logger } from "@main/services";
+import { db, levelKeys } from "@main/level";
+import type { User } from "@types";
 
 /**
  * Initiate GitHub OAuth sign-in flow
@@ -90,6 +92,43 @@ const handleSupabaseCallback = async (
 
     logger.info("Successfully authenticated user:", data.user?.email);
 
+    // Extract GitHub user data and store it
+    if (data.user) {
+      const githubUsername =
+        data.user.user_metadata?.user_name ||
+        data.user.user_metadata?.preferred_username ||
+        null;
+      const githubAvatarUrl = data.user.user_metadata?.avatar_url || null;
+      const displayName =
+        data.user.user_metadata?.full_name ||
+        data.user.user_metadata?.name ||
+        githubUsername ||
+        "User";
+
+      const userData: User = {
+        id: data.user.id,
+        displayName,
+        profileImageUrl: githubAvatarUrl,
+        backgroundImageUrl: null,
+        subscription: null,
+        githubUsername,
+        githubAvatarUrl,
+        email: data.user.email || null,
+      };
+
+      logger.info("Storing user data:", userData);
+
+      // Store user data in level database
+      try {
+        await db.put<string, User>(levelKeys.user, userData, {
+          valueEncoding: "json",
+        });
+        logger.info("User data stored successfully");
+      } catch (dbError) {
+        logger.error("Error storing user data:", dbError);
+      }
+    }
+
     // Send success event to renderer
     if (WindowManager.mainWindow) {
       WindowManager.mainWindow.webContents.send("supabase-auth-success", {
@@ -145,6 +184,22 @@ const supabaseSignOut = async () => {
     }
 
     logger.info("User signed out successfully");
+
+    // Clear stored user data
+    try {
+      await db.del(levelKeys.user);
+      logger.info("User data cleared from database");
+    } catch (dbError) {
+      logger.error("Error clearing user data:", dbError);
+    }
+
+    // Clear stored session tokens
+    try {
+      await db.del("supabase_auth-token");
+      logger.info("Session tokens cleared from database");
+    } catch (dbError) {
+      logger.error("Error clearing session tokens:", dbError);
+    }
 
     // Notify renderer
     if (WindowManager.mainWindow) {

@@ -18,6 +18,10 @@ const signOut = async (_event: Electron.IpcMainInvokeEvent) => {
         type: "del",
         key: levelKeys.user,
       },
+      {
+        type: "del",
+        key: "supabase_auth-token", // Clear Supabase session tokens
+      },
     ])
     .then(() => {
       /* Removes all games being played */

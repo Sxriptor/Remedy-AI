@@ -28,6 +28,9 @@ export interface User {
   profileImageUrl: string | null;
   backgroundImageUrl: string | null;
   subscription: Subscription | null;
+  githubUsername?: string | null;
+  githubAvatarUrl?: string | null;
+  email?: string | null;
 }
 
 export interface Game {

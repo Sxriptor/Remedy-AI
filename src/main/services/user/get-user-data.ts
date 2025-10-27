@@ -15,9 +15,9 @@ export const getUserData = async () => {
     if (loggedUser) {
       return {
         ...loggedUser,
-        username: "",
+        username: loggedUser.githubUsername || "",
         bio: "",
-        email: null,
+        email: loggedUser.email || null,
         profileVisibility: "PUBLIC" as ProfileVisibility,
         quirks: {
           backupsPerGameLimit: 0,
