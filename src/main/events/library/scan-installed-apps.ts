@@ -36,7 +36,10 @@ const getWindowsInstalledApps = async (): Promise<DetectedApp[]> => {
 
           if (file.isDirectory()) {
             executables.push(...scanDirectory(fullPath, depth + 1));
-          } else if (file.isFile() && file.name.toLowerCase().endsWith(".exe")) {
+          } else if (
+            file.isFile() &&
+            file.name.toLowerCase().endsWith(".exe")
+          ) {
             executables.push(fullPath);
           }
         } catch {

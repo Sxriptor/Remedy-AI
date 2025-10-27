@@ -28,9 +28,7 @@ export default function Settings() {
       const result = await window.electron.scanInstalledApps();
 
       if (result.success && result.addedCount > 0) {
-        showSuccessToast(
-          t("scan_complete", { count: result.addedCount })
-        );
+        showSuccessToast(t("scan_complete", { count: result.addedCount }));
       } else if (result.success) {
         showSuccessToast(t("scan_complete_no_apps"));
       }
