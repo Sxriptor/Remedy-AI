@@ -8,6 +8,7 @@ export * from "./main-loop";
 export * from "./api-client";
 export * from "./supabase-client";
 export * from "./auth-manager";
+export * from "./github-api";
 export * from "./ludusavi";
 export * from "./cloud-sync";
 export * from "./7zip";

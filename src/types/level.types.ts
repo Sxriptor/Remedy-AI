@@ -31,6 +31,11 @@ export interface User {
   githubUsername?: string | null;
   githubAvatarUrl?: string | null;
   email?: string | null;
+  githubBio?: string | null;
+  githubBlog?: string | null;
+  githubTwitterUsername?: string | null;
+  githubCompany?: string | null;
+  githubLocation?: string | null;
 }
 
 export interface Game {

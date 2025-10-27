@@ -95,6 +95,47 @@
     font-weight: 500;
   }
 
+  &__github-info {
+    display: flex;
+    flex-direction: column;
+    gap: calc(globals.$spacing-unit / 2);
+    margin-top: globals.$spacing-unit;
+    max-width: 600px;
+  }
+
+  &__github-bio {
+    margin: 0;
+    font-size: 0.9rem;
+    color: rgba(255, 255, 255, 0.8);
+    text-shadow: 0 0 5px rgb(0 0 0 / 40%);
+    line-height: 1.5;
+  }
+
+  &__github-links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: calc(globals.$spacing-unit * 1.5);
+    font-size: 0.85rem;
+  }
+
+  &__github-link {
+    color: rgba(255, 255, 255, 0.7);
+    text-shadow: 0 0 5px rgb(0 0 0 / 40%);
+    display: inline-flex;
+    align-items: center;
+    gap: calc(globals.$spacing-unit / 4);
+
+    &--clickable {
+      text-decoration: none;
+      transition: color 0.2s ease;
+
+      &:hover {
+        color: rgba(255, 255, 255, 0.9);
+        text-decoration: underline;
+      }
+    }
+  }
+
   &__current-game {
     &-wrapper {
       display: flex;

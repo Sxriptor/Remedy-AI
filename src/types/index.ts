@@ -214,6 +214,11 @@ export interface UserProfile {
   };
   badges: string[];
   githubUsername?: string | null;
+  githubBio?: string | null;
+  githubBlog?: string | null;
+  githubTwitterUsername?: string | null;
+  githubCompany?: string | null;
+  githubLocation?: string | null;
 }
 
 export interface UpdateProfileRequest {

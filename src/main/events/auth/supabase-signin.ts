@@ -1,5 +1,5 @@
 import { ipcMain, shell } from "electron";
-import { getSupabaseClient } from "@main/services";
+import { getSupabaseClient, fetchGitHubUserData } from "@main/services";
 import { registerEvent } from "../register-event";
 import { WindowManager } from "@main/services";
 import { logger } from "@main/services";
@@ -105,6 +105,12 @@ const handleSupabaseCallback = async (
         githubUsername ||
         "User";
 
+      // Fetch additional GitHub data (bio, links, etc.)
+      let githubData = null;
+      if (githubUsername) {
+        githubData = await fetchGitHubUserData(githubUsername);
+      }
+
       const userData: User = {
         id: data.user.id,
         displayName,
@@ -114,6 +120,11 @@ const handleSupabaseCallback = async (
         githubUsername,
         githubAvatarUrl,
         email: data.user.email || null,
+        githubBio: githubData?.bio || null,
+        githubBlog: githubData?.blog || null,
+        githubTwitterUsername: githubData?.twitter_username || null,
+        githubCompany: githubData?.company || null,
+        githubLocation: githubData?.location || null,
       };
 
       logger.info("Storing user data:", userData);

@@ -4,6 +4,7 @@ import { URL } from "url";
 import { logger } from "./logger";
 import { SupabaseClient } from "./supabase-client";
 import { WindowManager } from "./window-manager";
+import { fetchGitHubUserData } from "./github-api";
 import { db } from "../level";
 import { levelKeys } from "../level/sublevels";
 import type { User } from "@types";
@@ -149,6 +150,12 @@ class AuthManager {
                 githubUsername ||
                 "User";
 
+              // Fetch additional GitHub data (bio, links, etc.)
+              let githubData = null;
+              if (githubUsername) {
+                githubData = await fetchGitHubUserData(githubUsername);
+              }
+
               const userData: User = {
                 id: data.user.id,
                 displayName,
@@ -158,6 +165,11 @@ class AuthManager {
                 githubUsername,
                 githubAvatarUrl,
                 email: data.user.email || null,
+                githubBio: githubData?.bio || null,
+                githubBlog: githubData?.blog || null,
+                githubTwitterUsername: githubData?.twitter_username || null,
+                githubCompany: githubData?.company || null,
+                githubLocation: githubData?.location || null,
               };
 
               logger.info("Storing user data:", userData);

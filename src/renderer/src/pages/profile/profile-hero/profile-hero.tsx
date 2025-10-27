@@ -306,40 +306,97 @@ export function ProfileHero() {
 
             <div className="profile-hero__information">
               {userProfile ? (
-                <div className="profile-hero__display-name-container">
-                  <h2 className="profile-hero__display-name">
-                    {userProfile?.displayName}
-                  </h2>
+                <>
+                  <div className="profile-hero__display-name-container">
+                    <h2 className="profile-hero__display-name">
+                      {userProfile?.displayName}
+                    </h2>
 
-                  {userProfile?.githubUsername && (
-                    <p className="profile-hero__github-username">
-                      @{userProfile.githubUsername}
-                    </p>
-                  )}
+                    {userProfile?.githubUsername && (
+                      <p className="profile-hero__github-username">
+                        @{userProfile.githubUsername}
+                      </p>
+                    )}
 
-                  <div className="profile-hero__badges">
-                    {userProfile.badges.map((badgeName) => {
-                      const badge = badges.find((b) => b.name === badgeName);
+                    <div className="profile-hero__badges">
+                      {userProfile.badges.map((badgeName) => {
+                        const badge = badges.find((b) => b.name === badgeName);
 
-                      if (!badge) return null;
+                        if (!badge) return null;
 
-                      return (
-                        <img
-                          key={badge.name}
-                          src={badge.badge.url}
-                          alt={badge.name}
-                          width={24}
-                          height={24}
-                          data-tooltip-place="top"
-                          data-tooltip-content={badge.description}
-                          data-tooltip-id="badge-name"
-                        />
-                      );
-                    })}
+                        return (
+                          <img
+                            key={badge.name}
+                            src={badge.badge.url}
+                            alt={badge.name}
+                            width={24}
+                            height={24}
+                            data-tooltip-place="top"
+                            data-tooltip-content={badge.description}
+                            data-tooltip-id="badge-name"
+                          />
+                        );
+                      })}
 
-                    <Tooltip id="badge-name" />
+                      <Tooltip id="badge-name" />
+                    </div>
                   </div>
-                </div>
+
+                  {/* GitHub Bio and Links Section */}
+                  {(userProfile?.githubBio ||
+                    userProfile?.githubBlog ||
+                    userProfile?.githubTwitterUsername ||
+                    userProfile?.githubLocation ||
+                    userProfile?.githubCompany) && (
+                    <div className="profile-hero__github-info">
+                      {userProfile.githubBio && (
+                        <p className="profile-hero__github-bio">
+                          {userProfile.githubBio}
+                        </p>
+                      )}
+
+                      <div className="profile-hero__github-links">
+                        {userProfile.githubLocation && (
+                          <span className="profile-hero__github-link">
+                            📍 {userProfile.githubLocation}
+                          </span>
+                        )}
+
+                        {userProfile.githubCompany && (
+                          <span className="profile-hero__github-link">
+                            🏢 {userProfile.githubCompany}
+                          </span>
+                        )}
+
+                        {userProfile.githubBlog && (
+                          <a
+                            href={
+                              userProfile.githubBlog.startsWith("http")
+                                ? userProfile.githubBlog
+                                : `https://${userProfile.githubBlog}`
+                            }
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="profile-hero__github-link profile-hero__github-link--clickable"
+                          >
+                            🔗 {userProfile.githubBlog}
+                          </a>
+                        )}
+
+                        {userProfile.githubTwitterUsername && (
+                          <a
+                            href={`https://twitter.com/${userProfile.githubTwitterUsername}`}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="profile-hero__github-link profile-hero__github-link--clickable"
+                          >
+                            🐦 @{userProfile.githubTwitterUsername}
+                          </a>
+                        )}
+                      </div>
+                    </div>
+                  )}
+                </>
               ) : (
                 <Skeleton width={150} height={28} />
               )}
