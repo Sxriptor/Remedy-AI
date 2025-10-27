@@ -3,6 +3,7 @@
 ## Summary
 
 Enhanced the profile page to display the user's GitHub username below their display name along with their avatar and display name. When a user views their own profile, it now shows:
+
 - ✅ GitHub Avatar (from stored profile image)
 - ✅ Display Name (from stored display name)
 - ✅ GitHub Username (from stored GitHub username)
@@ -10,10 +11,11 @@ Enhanced the profile page to display the user's GitHub username below their disp
 ## Changes Made
 
 ### 1. **Added GitHub Username Field to UserProfile Type** (`src/types/index.ts`)
+
 ```typescript
 export interface UserProfile {
   // ... existing fields ...
-  githubUsername?: string | null;  // ← NEW
+  githubUsername?: string | null; // ← NEW
 }
 ```
 
@@ -22,6 +24,7 @@ This allows the profile to store and display the user's GitHub username.
 ### 2. **Updated UserProfileContextProvider** (`src/renderer/src/context/user-profile/user-profile.context.tsx`)
 
 Modified the `getUserProfile` function to:
+
 - Check if the user is viewing their own profile (`userDetails?.id === userId`)
 - If viewing own profile, populate the `UserProfile` with current user's data from Redux store:
   - `displayName` - User's display name
@@ -33,6 +36,7 @@ Modified the `getUserProfile` function to:
 ### 3. **Updated ProfileHero Component** (`src/renderer/src/pages/profile/profile-hero/profile-hero.tsx`)
 
 Added GitHub username display below the display name:
+
 ```typescript
 {userProfile?.githubUsername && (
   <p className="profile-hero__github-username">
@@ -44,6 +48,7 @@ Added GitHub username display below the display name:
 ### 4. **Added Profile Hero Styling** (`src/renderer/src/pages/profile/profile-hero/profile-hero.scss`)
 
 New CSS class for the GitHub username:
+
 ```scss
 &__github-username {
   margin: 0;
@@ -57,11 +62,13 @@ New CSS class for the GitHub username:
 ## How It Works
 
 When a user clicks their profile (top-left sidebar), the page now displays:
+
 - GitHub avatar (profile image)
-- Display name 
+- Display name
 - **GitHub username with @ symbol (NEW!)**
 
 Example:
+
 ```
 [Avatar]  John Doe
           @johndoe

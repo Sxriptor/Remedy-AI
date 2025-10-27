@@ -145,7 +145,15 @@ export function UserProfileContextProvider({
         showErrorToast(t("user_not_found"));
         navigate(-1);
       });
-  }, [navigate, getUserStats, getUserLibraryGames, showErrorToast, userId, t, userDetails]);
+  }, [
+    navigate,
+    getUserStats,
+    getUserLibraryGames,
+    showErrorToast,
+    userId,
+    t,
+    userDetails,
+  ]);
 
   const getBadges = useCallback(async () => {
     // Badges fetching removed - no longer using Hydra API
