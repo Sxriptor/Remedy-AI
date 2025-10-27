@@ -110,7 +110,33 @@ export function UserProfileContextProvider({
     getUserStats();
     getUserLibraryGames();
 
-    // User profile removed - no longer using Hydra API
+    // If viewing own profile, populate with current user details
+    if (userDetails && userId === userDetails.id) {
+      const profile: UserProfile = {
+        id: userDetails.id,
+        displayName: userDetails.displayName,
+        profileImageUrl: userDetails.profileImageUrl,
+        email: userDetails.email,
+        backgroundImageUrl: userDetails.backgroundImageUrl,
+        profileVisibility: userDetails.profileVisibility,
+        libraryGames: [],
+        recentGames: [],
+        friends: [],
+        totalFriends: 0,
+        relation: null,
+        currentGame: null,
+        bio: userDetails.bio,
+        hasActiveSubscription: false,
+        karma: userDetails.karma || 0,
+        quirks: userDetails.quirks || { backupsPerGameLimit: 0 },
+        badges: [],
+        githubUsername: userDetails.username,
+      };
+      setUserProfile(profile);
+      return;
+    }
+
+    // User profile removed - no longer using Hydra API for other users
     return Promise.resolve(null)
       .then(() => {
         setUserProfile(null);
@@ -119,7 +145,7 @@ export function UserProfileContextProvider({
         showErrorToast(t("user_not_found"));
         navigate(-1);
       });
-  }, [navigate, getUserStats, getUserLibraryGames, showErrorToast, userId, t]);
+  }, [navigate, getUserStats, getUserLibraryGames, showErrorToast, userId, t, userDetails]);
 
   const getBadges = useCallback(async () => {
     // Badges fetching removed - no longer using Hydra API

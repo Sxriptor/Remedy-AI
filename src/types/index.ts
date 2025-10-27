@@ -213,6 +213,7 @@ export interface UserProfile {
     backupsPerGameLimit: number;
   };
   badges: string[];
+  githubUsername?: string | null;
 }
 
 export interface UpdateProfileRequest {

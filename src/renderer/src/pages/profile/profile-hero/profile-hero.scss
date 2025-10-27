@@ -87,6 +87,14 @@
     text-shadow: 0 0 5px rgb(0 0 0 / 40%);
   }
 
+  &__github-username {
+    margin: 0;
+    font-size: 0.9rem;
+    color: rgba(255, 255, 255, 0.6);
+    text-shadow: 0 0 5px rgb(0 0 0 / 40%);
+    font-weight: 500;
+  }
+
   &__current-game {
     &-wrapper {
       display: flex;

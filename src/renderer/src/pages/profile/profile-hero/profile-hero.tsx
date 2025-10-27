@@ -311,6 +311,12 @@ export function ProfileHero() {
                     {userProfile?.displayName}
                   </h2>
 
+                  {userProfile?.githubUsername && (
+                    <p className="profile-hero__github-username">
+                      @{userProfile.githubUsername}
+                    </p>
+                  )}
+
                   <div className="profile-hero__badges">
                     {userProfile.badges.map((badgeName) => {
                       const badge = badges.find((b) => b.name === badgeName);
