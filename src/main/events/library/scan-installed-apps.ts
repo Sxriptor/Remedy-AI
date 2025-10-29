@@ -5,11 +5,60 @@ import fs from "node:fs";
 import { SystemPath } from "@main/services/system-path";
 import { randomUUID } from "node:crypto";
 import type { GameShop } from "@types";
+import { app } from "electron";
 
 interface DetectedApp {
   name: string;
   executablePath: string;
 }
+
+interface ScanFilter {
+  Applications: {
+    [category: string]: string[];
+  };
+}
+
+let scanFilterCache: ScanFilter | null = null;
+
+const loadScanFilter = (): ScanFilter | null => {
+  if (scanFilterCache) {
+    return scanFilterCache;
+  }
+
+  try {
+    // In development: out/main/index.js -> ../../resources/scan-filter.json
+    // In production: resources are in process.resourcesPath
+    const filterPath = app.isPackaged
+      ? path.join(process.resourcesPath, "scan-filter.json")
+      : path.join(__dirname, "../../resources/scan-filter.json");
+
+    console.log("Looking for scan-filter.json at:", filterPath);
+    console.log("__dirname:", __dirname);
+    console.log("app.isPackaged:", app.isPackaged);
+
+    if (!fs.existsSync(filterPath)) {
+      console.warn("scan-filter.json not found at:", filterPath);
+      // Try alternative path
+      const altPath = path.join(process.cwd(), "resources/scan-filter.json");
+      console.log("Trying alternative path:", altPath);
+      if (fs.existsSync(altPath)) {
+        const filterData = fs.readFileSync(altPath, "utf-8");
+        scanFilterCache = JSON.parse(filterData);
+        console.log("Loaded scan filter from alternative path with", Object.keys(scanFilterCache?.Applications || {}).length, "categories");
+        return scanFilterCache;
+      }
+      return null;
+    }
+
+    const filterData = fs.readFileSync(filterPath, "utf-8");
+    scanFilterCache = JSON.parse(filterData);
+    console.log("Loaded scan filter with", Object.keys(scanFilterCache?.Applications || {}).length, "categories");
+    return scanFilterCache;
+  } catch (error) {
+    console.error("Error loading scan-filter.json:", error);
+    return null;
+  }
+};
 
 // Temporarily disabled icon extraction to speed up scanning
 // Icon extraction was causing the scan to hang
@@ -96,6 +145,7 @@ const shouldIgnoreExecutable = (
     "ghub",
     "razer",
     "synapse",
+    "chroma",
     "msi",
     "afterburner",
     "asus",
@@ -107,8 +157,25 @@ const shouldIgnoreExecutable = (
     "radeon",
     "rtss", // RivaTuner
     "hwmonitor",
+    "hwinfo",
     "cpuz",
     "gpuz",
+    "steelseries",
+    "engine",
+    "roccat",
+    "swarm",
+    "hyperx",
+    "ngenuity",
+    "alienware",
+    "command center",
+    "evga",
+    "precision",
+    "gigabyte",
+    "rgb fusion",
+    "thermaltake",
+    "tt rgb",
+    "cooler master",
+    "masterplus",
   ];
 
   // System utilities and maintenance to ignore
@@ -146,6 +213,12 @@ const shouldIgnoreExecutable = (
     "register",
     "activate",
     "license",
+    "wmplayer", // Windows Media Player (legacy)
+    "wordpad", // WordPad (legacy)
+    "notepad", // Basic Notepad (use Notepad++ instead)
+    "mspaint", // MS Paint (basic)
+    "calc", // Calculator
+    "charmap", // Character Map
   ];
 
   // Combine all ignore patterns
@@ -180,112 +253,117 @@ const shouldIgnoreExecutable = (
   return shouldIgnore || shouldIgnoreByPath;
 };
 
+const getAppCategory = (fileName: string, filePath: string): string | null => {
+  const filter = loadScanFilter();
+  
+  if (!filter) {
+    return null;
+  }
+
+  const lowerPath = filePath.toLowerCase();
+  const lowerFileName = fileName.toLowerCase();
+
+  // Check each category to find which one this app belongs to
+  for (const [categoryName, apps] of Object.entries(filter.Applications)) {
+    for (const appName of apps) {
+      const lowerAppName = appName.toLowerCase();
+      
+      if (lowerPath.includes(lowerAppName)) {
+        return categoryName;
+      }
+      
+      const appNameWords = lowerAppName.split(/\s+/);
+      const matchesAppName = appNameWords.some((word) => 
+        lowerFileName.includes(word) && word.length > 3
+      );
+      
+      if (matchesAppName) {
+        return categoryName;
+      }
+    }
+  }
+
+  return null;
+};
+
 const isProductivityApp = (fileName: string, filePath: string): boolean => {
+  const filter = loadScanFilter();
+  
+  if (!filter) {
+    console.warn("No scan filter loaded, rejecting app");
+    return false;
+  }
+
   const lowerFileName = fileName.toLowerCase();
   const lowerPath = filePath.toLowerCase();
 
-  // Productivity & Development Tools
-  const productivityPatterns = [
-    // Code Editors & IDEs
-    "code",
-    "vscode",
-    "cursor",
-    "sublime",
-    "atom",
-    "notepad++",
-    "visual studio",
-    "jetbrains",
-    "pycharm",
-    "webstorm",
-    "intellij",
-    "rider",
-    "phpstorm",
-    "goland",
-    "clion",
-    "rubymine",
+  // Get all allowed app names from the filter
+  const allAllowedApps: string[] = [];
+  for (const category of Object.values(filter.Applications)) {
+    allAllowedApps.push(...category);
+  }
 
-    // Communication
-    "discord",
-    "slack",
-    "teams",
-    "zoom",
-    "skype",
-    "teamspeak",
-    "telegram",
-    "whatsapp",
-    "signal",
+  // Check if any allowed app name matches the path or folder
+  for (const appName of allAllowedApps) {
+    const lowerAppName = appName.toLowerCase();
+    
+    // Check if the app name is in the path (folder structure)
+    if (lowerPath.includes(lowerAppName)) {
+      // Make sure it's not a helper process or system utility
+      const helperPatterns = [
+        "helper",
+        "service",
+        "background",
+        "daemon",
+        "agent",
+        "watchdog",
+        "monitor",
+        "crashreporter",
+        "crash_reporter",
+        "crashpad",
+        "createdump",
+        "browsercore",
+        "proxy",
+        "relay",
+        "host",
+        "settings",
+        "driver",
+        "dtu",
+        "msal",
+        "msrdc",
+        "unrar", // UnRAR is a command-line tool, not the main app
+        "rar.exe", // Rar.exe is command-line, WinRAR.exe is the GUI
+        "tunnel", // code-tunnel is a helper
+        "wsl.exe", // WSL executables are system utilities
+        "wslg",
+        "wslhost",
+        "wslrelay",
+        "wslsettings",
+        " app.exe", // Catches "ollama app.exe" - space before app indicates it's not the main exe
+      ];
+      
+      const isHelper = helperPatterns.some((pattern) =>
+        lowerFileName.includes(pattern)
+      );
+      
+      if (!isHelper) {
+        return true;
+      }
+    }
+    
+    // Check if the filename contains the app name
+    // This helps catch executables like "Discord.exe", "Slack.exe", etc.
+    const appNameWords = lowerAppName.split(/\s+/);
+    const matchesAppName = appNameWords.some((word) => 
+      lowerFileName.includes(word) && word.length > 3 // Avoid short words like "pro", "one"
+    );
+    
+    if (matchesAppName) {
+      return true;
+    }
+  }
 
-    // Browsers
-    "chrome",
-    "firefox",
-    "edge",
-    "brave",
-    "opera",
-
-    // Email Clients
-    "outlook",
-    "thunderbird",
-    "mailbird",
-    "postbox",
-
-    // Office & Productivity
-    "word",
-    "excel",
-    "powerpoint",
-    "onenote",
-    "notion",
-    "evernote",
-    "obsidian",
-    "joplin",
-    "typora",
-
-    // AI Tools
-    "chatgpt",
-    "copilot",
-    "claude",
-    "openai",
-
-    // Development Tools
-    "git",
-    "docker",
-    "node",
-    "python",
-    "java",
-    "mysql",
-    "postgres",
-    "mongodb",
-    "redis",
-    "postman",
-    "insomnia",
-    "terminal",
-    "powershell",
-    "cmd",
-    "wsl",
-
-    // Design Tools
-    "figma",
-    "photoshop",
-    "illustrator",
-    "gimp",
-    "inkscape",
-    "blender",
-    "unity",
-    "unreal",
-
-    // Utilities
-    "7zip",
-    "winrar",
-    "vlc",
-    "spotify",
-    "obs",
-    "greenshot",
-    "sharex",
-    "lightshot",
-  ];
-
-  return productivityPatterns.some(
-    (pattern) => lowerFileName.includes(pattern) || lowerPath.includes(pattern)
-  );
+  return false;
 };
 
 const getWindowsInstalledApps = async (): Promise<DetectedApp[]> => {
@@ -295,13 +373,18 @@ const getWindowsInstalledApps = async (): Promise<DetectedApp[]> => {
     process.env.ProgramFiles || "C:\\Program Files",
     process.env["ProgramFiles(x86)"] || "C:\\Program Files (x86)",
     path.join(SystemPath.getPath("home"), "AppData", "Local", "Programs"),
+    path.join(SystemPath.getPath("home"), "AppData", "Local"),
+    path.join(SystemPath.getPath("home"), "AppData", "Roaming"),
+    "C:\\Program Files\\WindowsApps", // Microsoft Store apps
   ];
 
-  const scanDirectory = (dir: string, depth = 0): string[] => {
+  console.log("Scanning directories:", commonPaths);
+
+  const scanDirectory = (dir: string, depth = 0, maxDepth = 3): string[] => {
     const executables: string[] = [];
 
-    // Only scan 2 levels deep to avoid finding too many files
-    if (depth > 2) return executables;
+    // Scan deeper to find more apps
+    if (depth > maxDepth) return executables;
 
     try {
       if (!fs.existsSync(dir)) return executables;
@@ -313,7 +396,26 @@ const getWindowsInstalledApps = async (): Promise<DetectedApp[]> => {
           const fullPath = path.join(dir, file.name);
 
           if (file.isDirectory()) {
-            executables.push(...scanDirectory(fullPath, depth + 1));
+            // Skip common subdirectories that contain helper files
+            const lowerDirName = file.name.toLowerCase();
+            const skipDirs = [
+              "resources",
+              "locales",
+              "swiftshader",
+              "lib",
+              "bin",
+              "tools",
+              "helpers",
+              "plugins",
+              "extensions",
+              "cache",
+              "temp",
+              "logs",
+            ];
+            
+            if (!skipDirs.includes(lowerDirName)) {
+              executables.push(...scanDirectory(fullPath, depth + 1, maxDepth));
+            }
           } else if (
             file.isFile() &&
             file.name.toLowerCase().endsWith(".exe")
@@ -333,8 +435,12 @@ const getWindowsInstalledApps = async (): Promise<DetectedApp[]> => {
   };
 
   for (const basePath of commonPaths) {
-    if (!fs.existsSync(basePath)) continue;
+    if (!fs.existsSync(basePath)) {
+      console.log(`Skipping non-existent path: ${basePath}`);
+      continue;
+    }
 
+    console.log(`Scanning: ${basePath}`);
     const exeFiles = scanDirectory(basePath);
 
     for (const exePath of exeFiles) {
@@ -443,7 +549,8 @@ const scanInstalledApps = async () => {
 
     console.log(`Existing apps in library: ${existingPaths.size}`);
 
-    const addedApps: Array<{ name: string; executablePath: string }> = [];
+    const addedApps: Array<{ name: string; executablePath: string; category: string }> = [];
+    const seenAppNames = new Set<string>(); // Track app names to avoid duplicates
 
     for (const app of detectedApps) {
       try {
@@ -451,6 +558,22 @@ const scanInstalledApps = async () => {
         if (existingPaths.has(app.executablePath.toLowerCase())) {
           continue;
         }
+
+        // Check if we've already added an app with this name
+        const normalizedName = app.name.toLowerCase().trim();
+        if (seenAppNames.has(normalizedName)) {
+          console.log(`Skipping duplicate app: ${app.name}`);
+          continue;
+        }
+
+        // Get the category for this app
+        const category = getAppCategory(app.name, app.executablePath);
+        if (!category) {
+          console.log(`No category found for: ${app.name}`);
+          continue;
+        }
+
+        seenAppNames.add(normalizedName);
 
         const objectId = randomUUID();
         const shop: GameShop = "custom";
@@ -476,6 +599,7 @@ const scanInstalledApps = async () => {
           favorite: false,
           automaticCloudSync: false,
           hasManuallyUpdatedPlaytime: false,
+          category: category,
         };
 
         // Store game assets
@@ -494,16 +618,41 @@ const scanInstalledApps = async () => {
         await gamesShopAssetsSublevel.put(gameKey, assets);
 
         await gamesSublevel.put(gameKey, game);
-        addedApps.push(app);
+        addedApps.push({ name: app.name, executablePath: app.executablePath, category });
 
-        console.log(`Added app: ${app.name}`);
+        console.log(`Added app: ${app.name} (${category})`);
       } catch (error) {
         console.error(`Error adding app ${app.name}:`, error);
         continue;
       }
     }
 
-    console.log(`Scan complete. Added ${addedApps.length} new apps`);
+    // Sort added apps by category, then by name
+    addedApps.sort((a, b) => {
+      if (a.category !== b.category) {
+        return a.category.localeCompare(b.category);
+      }
+      return a.name.localeCompare(b.name);
+    });
+
+    console.log(`\n=== Scan Complete ===`);
+    console.log(`Added ${addedApps.length} new apps\n`);
+
+    // Group by category for summary
+    const byCategory = addedApps.reduce((acc, app) => {
+      if (!acc[app.category]) {
+        acc[app.category] = [];
+      }
+      acc[app.category].push(app.name);
+      return acc;
+    }, {} as Record<string, string[]>);
+
+    // Print summary by category
+    for (const [category, apps] of Object.entries(byCategory).sort()) {
+      console.log(`${category} (${apps.length}):`);
+      apps.forEach(app => console.log(`  - ${app}`));
+      console.log("");
+    }
 
     return {
       success: true,
