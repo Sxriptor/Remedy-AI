@@ -9,7 +9,11 @@ import { DeleteGameModal } from "./delete-game-modal";
 import { DownloadGroup } from "./download-group";
 import type { GameShop, LibraryGame, SeedingStatus } from "@types";
 import { orderBy } from "lodash-es";
-import { ArrowDownIcon, ChevronDownIcon, ChevronRightIcon } from "@primer/octicons-react";
+import {
+  ArrowDownIcon,
+  ChevronDownIcon,
+  ChevronRightIcon,
+} from "@primer/octicons-react";
 
 export default function Downloads() {
   const { library, updateLibrary } = useLibrary();
@@ -61,7 +65,7 @@ export default function Downloads() {
   const isExtensionOrPlugin = (game: LibraryGame): boolean => {
     const title = game.title.toLowerCase();
     const executablePath = game.executablePath?.toLowerCase() || "";
-    
+
     const extensionKeywords = [
       "plugin",
       "extension",
@@ -76,12 +80,12 @@ export default function Downloads() {
       "config",
       "settings",
     ];
-    
+
     // Check if title or path contains extension keywords
     const hasExtensionKeyword = extensionKeywords.some(
       (keyword) => title.includes(keyword) || executablePath.includes(keyword)
     );
-    
+
     // Common subdirectory names for extensions/plugins
     const extensionSubdirs = [
       "\\scripts\\",
@@ -101,12 +105,12 @@ export default function Downloads() {
       "/utilities/",
       "/helpers/",
     ];
-    
+
     // Check if exe is in a subdirectory that typically contains extensions
     const isInExtensionSubdir = extensionSubdirs.some((subdir) =>
       executablePath.includes(subdir)
     );
-    
+
     return hasExtensionKeyword || isInExtensionSubdir;
   };
 
@@ -231,19 +235,27 @@ export default function Downloads() {
 
               return (
                 <div key={group.title} className="download-group">
-                  <div 
+                  <div
                     className={`download-group__header ${group.collapsible ? "download-group__header--collapsible" : ""}`}
                     onClick={group.collapsible ? group.onToggle : undefined}
-                    style={{ cursor: group.collapsible ? "pointer" : "default" }}
+                    style={{
+                      cursor: group.collapsible ? "pointer" : "default",
+                    }}
                   >
                     {group.collapsible && (
                       <span className="download-group__chevron">
-                        {group.collapsed ? <ChevronRightIcon /> : <ChevronDownIcon />}
+                        {group.collapsed ? (
+                          <ChevronRightIcon />
+                        ) : (
+                          <ChevronDownIcon />
+                        )}
                       </span>
                     )}
                     <h2>{group.title}</h2>
                     <div className="download-group__header-divider" />
-                    <h3 className="download-group__header-count">{group.library.length}</h3>
+                    <h3 className="download-group__header-count">
+                      {group.library.length}
+                    </h3>
                   </div>
 
                   {(!group.collapsible || !group.collapsed) && (

@@ -7,7 +7,9 @@ import { promisify } from "util";
 
 const execAsync = promisify(exec);
 
-const extractWindowsIcon = async (executablePath: string): Promise<string | null> => {
+const extractWindowsIcon = async (
+  executablePath: string
+): Promise<string | null> => {
   try {
     // Use a PowerShell script to extract the icon
     const iconsDir = path.join(app.getPath("userData"), "extracted-icons");
@@ -34,10 +36,10 @@ const extractWindowsIcon = async (executablePath: string): Promise<string | null
       // Convert to data URL
       const iconData = await fs.promises.readFile(iconPath);
       const base64 = iconData.toString("base64");
-      
+
       // Clean up the temporary file
       await fs.promises.unlink(iconPath).catch(() => {});
-      
+
       return `data:image/x-icon;base64,${base64}`;
     }
 
@@ -48,7 +50,9 @@ const extractWindowsIcon = async (executablePath: string): Promise<string | null
   }
 };
 
-const extractLinuxIcon = async (executablePath: string): Promise<string | null> => {
+const extractLinuxIcon = async (
+  executablePath: string
+): Promise<string | null> => {
   try {
     // For Linux, we can try to find associated .desktop files
     const fileName = path.basename(executablePath);
@@ -61,10 +65,10 @@ const extractLinuxIcon = async (executablePath: string): Promise<string | null> 
       if (fs.existsSync(desktopPath)) {
         const content = await fs.promises.readFile(desktopPath, "utf-8");
         const iconMatch = content.match(/Icon=(.*)/);
-        
+
         if (iconMatch && iconMatch[1]) {
           const iconPath = iconMatch[1];
-          
+
           // If it's an absolute path and exists
           if (path.isAbsolute(iconPath) && fs.existsSync(iconPath)) {
             const iconData = await fs.promises.readFile(iconPath);
@@ -101,4 +105,3 @@ const extractExecutableIcon = async (
 };
 
 registerEvent("extractExecutableIcon", extractExecutableIcon);
-

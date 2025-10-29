@@ -62,10 +62,13 @@ const extractIconFromExecutable = async (
 };
 */
 
-const shouldIgnoreExecutable = (fileName: string, filePath: string): boolean => {
+const shouldIgnoreExecutable = (
+  fileName: string,
+  filePath: string
+): boolean => {
   const lowerFileName = fileName.toLowerCase();
   const lowerPath = filePath.toLowerCase();
-  
+
   // Gaming-related applications to ignore
   const gamingPatterns = [
     "steam",
@@ -83,7 +86,7 @@ const shouldIgnoreExecutable = (fileName: string, filePath: string): boolean => 
     "xbox",
     "playnite",
   ];
-  
+
   // Hardware utilities to ignore
   const hardwarePatterns = [
     "corsair",
@@ -107,7 +110,7 @@ const shouldIgnoreExecutable = (fileName: string, filePath: string): boolean => 
     "cpuz",
     "gpuz",
   ];
-  
+
   // System utilities and maintenance to ignore
   const systemPatterns = [
     "uninstall",
@@ -144,19 +147,19 @@ const shouldIgnoreExecutable = (fileName: string, filePath: string): boolean => 
     "activate",
     "license",
   ];
-  
+
   // Combine all ignore patterns
   const allIgnorePatterns = [
     ...gamingPatterns,
     ...hardwarePatterns,
     ...systemPatterns,
   ];
-  
+
   // Check if filename or path contains any ignore patterns
   const shouldIgnore = allIgnorePatterns.some(
     (pattern) => lowerFileName.includes(pattern) || lowerPath.includes(pattern)
   );
-  
+
   // Ignore executables in specific directories
   const ignoreDirs = [
     "\\uninstall\\",
@@ -171,54 +174,115 @@ const shouldIgnoreExecutable = (fileName: string, filePath: string): boolean => 
     "/cache/",
     "/steam/",
   ];
-  
+
   const shouldIgnoreByPath = ignoreDirs.some((dir) => lowerPath.includes(dir));
-  
+
   return shouldIgnore || shouldIgnoreByPath;
 };
 
 const isProductivityApp = (fileName: string, filePath: string): boolean => {
   const lowerFileName = fileName.toLowerCase();
   const lowerPath = filePath.toLowerCase();
-  
+
   // Productivity & Development Tools
   const productivityPatterns = [
     // Code Editors & IDEs
-    "code", "vscode", "cursor", "sublime", "atom", "notepad++",
-    "visual studio", "jetbrains", "pycharm", "webstorm", "intellij",
-    "rider", "phpstorm", "goland", "clion", "rubymine",
-    
+    "code",
+    "vscode",
+    "cursor",
+    "sublime",
+    "atom",
+    "notepad++",
+    "visual studio",
+    "jetbrains",
+    "pycharm",
+    "webstorm",
+    "intellij",
+    "rider",
+    "phpstorm",
+    "goland",
+    "clion",
+    "rubymine",
+
     // Communication
-    "discord", "slack", "teams", "zoom", "skype", "teamspeak",
-    "telegram", "whatsapp", "signal",
-    
+    "discord",
+    "slack",
+    "teams",
+    "zoom",
+    "skype",
+    "teamspeak",
+    "telegram",
+    "whatsapp",
+    "signal",
+
     // Browsers
-    "chrome", "firefox", "edge", "brave", "opera",
-    
+    "chrome",
+    "firefox",
+    "edge",
+    "brave",
+    "opera",
+
     // Email Clients
-    "outlook", "thunderbird", "mailbird", "postbox",
-    
+    "outlook",
+    "thunderbird",
+    "mailbird",
+    "postbox",
+
     // Office & Productivity
-    "word", "excel", "powerpoint", "onenote", "notion",
-    "evernote", "obsidian", "joplin", "typora",
-    
+    "word",
+    "excel",
+    "powerpoint",
+    "onenote",
+    "notion",
+    "evernote",
+    "obsidian",
+    "joplin",
+    "typora",
+
     // AI Tools
-    "chatgpt", "copilot", "claude", "openai",
-    
+    "chatgpt",
+    "copilot",
+    "claude",
+    "openai",
+
     // Development Tools
-    "git", "docker", "node", "python", "java", "mysql",
-    "postgres", "mongodb", "redis", "postman", "insomnia",
-    "terminal", "powershell", "cmd", "wsl",
-    
+    "git",
+    "docker",
+    "node",
+    "python",
+    "java",
+    "mysql",
+    "postgres",
+    "mongodb",
+    "redis",
+    "postman",
+    "insomnia",
+    "terminal",
+    "powershell",
+    "cmd",
+    "wsl",
+
     // Design Tools
-    "figma", "photoshop", "illustrator", "gimp", "inkscape",
-    "blender", "unity", "unreal",
-    
+    "figma",
+    "photoshop",
+    "illustrator",
+    "gimp",
+    "inkscape",
+    "blender",
+    "unity",
+    "unreal",
+
     // Utilities
-    "7zip", "winrar", "vlc", "spotify", "obs",
-    "greenshot", "sharex", "lightshot",
+    "7zip",
+    "winrar",
+    "vlc",
+    "spotify",
+    "obs",
+    "greenshot",
+    "sharex",
+    "lightshot",
   ];
-  
+
   return productivityPatterns.some(
     (pattern) => lowerFileName.includes(pattern) || lowerPath.includes(pattern)
   );
@@ -297,7 +361,7 @@ const getWindowsInstalledApps = async (): Promise<DetectedApp[]> => {
         executablePath: exePath,
       });
     }
-    
+
     // Break outer loop if limit reached
     if (apps.length >= 500) break;
   }
@@ -359,7 +423,7 @@ const getLinuxInstalledApps = async (): Promise<DetectedApp[]> => {
 const scanInstalledApps = async () => {
   try {
     console.log("Starting app scan...");
-    
+
     const detectedApps =
       process.platform === "win32"
         ? await getWindowsInstalledApps()
@@ -431,7 +495,7 @@ const scanInstalledApps = async () => {
 
         await gamesSublevel.put(gameKey, game);
         addedApps.push(app);
-        
+
         console.log(`Added app: ${app.name}`);
       } catch (error) {
         console.error(`Error adding app ${app.name}:`, error);

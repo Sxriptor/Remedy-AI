@@ -276,7 +276,7 @@ export function Sidebar() {
   const isExtensionOrPlugin = (game: LibraryGame): boolean => {
     const title = game.title.toLowerCase();
     const executablePath = game.executablePath?.toLowerCase() || "";
-    
+
     const extensionKeywords = [
       "plugin",
       "extension",
@@ -291,12 +291,12 @@ export function Sidebar() {
       "config",
       "settings",
     ];
-    
+
     // Check if title or path contains extension keywords
     const hasExtensionKeyword = extensionKeywords.some(
       (keyword) => title.includes(keyword) || executablePath.includes(keyword)
     );
-    
+
     // Common subdirectory names for extensions/plugins
     const extensionSubdirs = [
       "\\scripts\\",
@@ -316,12 +316,12 @@ export function Sidebar() {
       "/utilities/",
       "/helpers/",
     ];
-    
+
     // Check if exe is in a subdirectory that typically contains extensions
     const isInExtensionSubdir = extensionSubdirs.some((subdir) =>
       executablePath.includes(subdir)
     );
-    
+
     return hasExtensionKeyword || isInExtensionSubdir;
   };
 
@@ -334,12 +334,12 @@ export function Sidebar() {
       .filter((game) => !game.favorite)
       .filter((game) => !showPlayableOnly || isGamePlayable(game))
       .filter((game) => !isExtensionOrPlugin(game));
-    
+
     const exts = filteredLibrary
       .filter((game) => !game.favorite)
       .filter((game) => !showPlayableOnly || isGamePlayable(game))
       .filter((game) => isExtensionOrPlugin(game));
-    
+
     return { applications: apps, extensions: exts };
   }, [filteredLibrary, showPlayableOnly]);
 
@@ -490,8 +490,14 @@ export function Sidebar() {
                   className="sidebar__subsection-title sidebar__subsection-title--collapsible"
                   onClick={() => setExtensionsCollapsed(!extensionsCollapsed)}
                 >
-                  {extensionsCollapsed ? <ChevronRightIcon size={12} /> : <ChevronDownIcon size={12} />}
-                  <small>{t("extensions_plugins")} ({extensions.length})</small>
+                  {extensionsCollapsed ? (
+                    <ChevronRightIcon size={12} />
+                  ) : (
+                    <ChevronDownIcon size={12} />
+                  )}
+                  <small>
+                    {t("extensions_plugins")} ({extensions.length})
+                  </small>
                 </button>
                 {!extensionsCollapsed && (
                   <ul className="sidebar__menu">
