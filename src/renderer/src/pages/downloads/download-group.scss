@@ -19,6 +19,15 @@
     justify-content: space-between;
     gap: calc(globals.$spacing-unit * 2);
 
+    &--collapsible {
+      user-select: none;
+      transition: opacity 0.2s;
+
+      &:hover {
+        opacity: 0.8;
+      }
+    }
+
     &-divider {
       flex: 1;
       background-color: globals.$border-color;
@@ -28,6 +37,13 @@
     &-count {
       font-weight: 400;
     }
+  }
+
+  &__chevron {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: globals.$muted-color;
   }
 
   &__title-wrapper {

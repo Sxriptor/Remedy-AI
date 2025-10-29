@@ -206,6 +206,12 @@ declare global {
     ) => () => Electron.IpcRenderer;
     getDefaultWinePrefixSelectionPath: () => Promise<string | null>;
     createSteamShortcut: (shop: GameShop, objectId: string) => Promise<void>;
+    scanInstalledApps: () => Promise<{
+      success: boolean;
+      addedCount: number;
+      error?: string;
+    }>;
+    extractExecutableIcon: (executablePath: string) => Promise<string | null>;
 
     /* Download sources */
     addDownloadSource: (url: string) => Promise<DownloadSource>;

@@ -26,6 +26,8 @@ import {
   CommentDiscussionIcon,
   PlayIcon,
   PlusIcon,
+  ChevronDownIcon,
+  ChevronRightIcon,
 } from "@primer/octicons-react";
 import { SidebarGameItem } from "./sidebar-game-item";
 import { SidebarAddingCustomGameModal } from "./sidebar-adding-custom-game-modal";
@@ -78,6 +80,7 @@ export function Sidebar() {
 
   const [showPlayableOnly, setShowPlayableOnly] = useState(false);
   const [showAddGameModal, setShowAddGameModal] = useState(false);
+  const [extensionsCollapsed, setExtensionsCollapsed] = useState(true);
 
   const handlePlayButtonClick = () => {
     setShowPlayableOnly(!showPlayableOnly);
@@ -270,9 +273,75 @@ export function Sidebar() {
     }
   };
 
+  const isExtensionOrPlugin = (game: LibraryGame): boolean => {
+    const title = game.title.toLowerCase();
+    const executablePath = game.executablePath?.toLowerCase() || "";
+    
+    const extensionKeywords = [
+      "plugin",
+      "extension",
+      "addon",
+      "add-on",
+      "helper",
+      "updater",
+      "launcher",
+      "installer",
+      "uninstall",
+      "setup",
+      "config",
+      "settings",
+    ];
+    
+    // Check if title or path contains extension keywords
+    const hasExtensionKeyword = extensionKeywords.some(
+      (keyword) => title.includes(keyword) || executablePath.includes(keyword)
+    );
+    
+    // Common subdirectory names for extensions/plugins
+    const extensionSubdirs = [
+      "\\scripts\\",
+      "\\bin\\",
+      "\\tools\\",
+      "\\lib\\",
+      "\\plugins\\",
+      "\\addons\\",
+      "\\utilities\\",
+      "\\helpers\\",
+      "/scripts/",
+      "/bin/",
+      "/tools/",
+      "/lib/",
+      "/plugins/",
+      "/addons/",
+      "/utilities/",
+      "/helpers/",
+    ];
+    
+    // Check if exe is in a subdirectory that typically contains extensions
+    const isInExtensionSubdir = extensionSubdirs.some((subdir) =>
+      executablePath.includes(subdir)
+    );
+    
+    return hasExtensionKeyword || isInExtensionSubdir;
+  };
+
   const favoriteGames = useMemo(() => {
     return sortedLibrary.filter((game) => game.favorite);
   }, [sortedLibrary]);
+
+  const { applications, extensions } = useMemo(() => {
+    const apps = filteredLibrary
+      .filter((game) => !game.favorite)
+      .filter((game) => !showPlayableOnly || isGamePlayable(game))
+      .filter((game) => !isExtensionOrPlugin(game));
+    
+    const exts = filteredLibrary
+      .filter((game) => !game.favorite)
+      .filter((game) => !showPlayableOnly || isGamePlayable(game))
+      .filter((game) => isExtensionOrPlugin(game));
+    
+    return { applications: apps, extensions: exts };
+  }, [filteredLibrary, showPlayableOnly]);
 
   return (
     <aside
@@ -394,19 +463,50 @@ export function Sidebar() {
               theme="dark"
             />
 
-            <ul className="sidebar__menu">
-              {filteredLibrary
-                .filter((game) => !game.favorite)
-                .filter((game) => !showPlayableOnly || isGamePlayable(game))
-                .map((game) => (
-                  <SidebarGameItem
-                    key={game.id}
-                    game={game}
-                    handleSidebarGameClick={handleSidebarGameClick}
-                    getGameTitle={getGameTitle}
-                  />
-                ))}
-            </ul>
+            {/* Applications Section */}
+            {applications.length > 0 && (
+              <div className="sidebar__subsection">
+                <small className="sidebar__subsection-title">
+                  {t("applications")} ({applications.length})
+                </small>
+                <ul className="sidebar__menu">
+                  {applications.map((game) => (
+                    <SidebarGameItem
+                      key={game.id}
+                      game={game}
+                      handleSidebarGameClick={handleSidebarGameClick}
+                      getGameTitle={getGameTitle}
+                    />
+                  ))}
+                </ul>
+              </div>
+            )}
+
+            {/* Extensions/Plugins Section - Collapsible */}
+            {extensions.length > 0 && (
+              <div className="sidebar__subsection">
+                <button
+                  type="button"
+                  className="sidebar__subsection-title sidebar__subsection-title--collapsible"
+                  onClick={() => setExtensionsCollapsed(!extensionsCollapsed)}
+                >
+                  {extensionsCollapsed ? <ChevronRightIcon size={12} /> : <ChevronDownIcon size={12} />}
+                  <small>{t("extensions_plugins")} ({extensions.length})</small>
+                </button>
+                {!extensionsCollapsed && (
+                  <ul className="sidebar__menu">
+                    {extensions.map((game) => (
+                      <SidebarGameItem
+                        key={game.id}
+                        game={game}
+                        handleSidebarGameClick={handleSidebarGameClick}
+                        getGameTitle={getGameTitle}
+                      />
+                    ))}
+                  </ul>
+                )}
+              </div>
+            )}
           </section>
         </div>
       </div>

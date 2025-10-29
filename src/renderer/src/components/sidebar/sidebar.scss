@@ -140,6 +140,44 @@
     padding-bottom: globals.$spacing-unit;
   }
 
+  &__subsection {
+    display: flex;
+    flex-direction: column;
+    gap: globals.$spacing-unit;
+    margin-top: globals.$spacing-unit;
+  }
+
+  &__subsection-title {
+    text-transform: uppercase;
+    font-weight: bold;
+    font-size: 11px;
+    color: globals.$body-color;
+    padding-left: globals.$spacing-unit;
+
+    &--collapsible {
+      display: flex;
+      align-items: center;
+      gap: calc(globals.$spacing-unit / 2);
+      cursor: pointer;
+      background: none;
+      border: none;
+      color: globals.$body-color;
+      padding: calc(globals.$spacing-unit / 2) globals.$spacing-unit;
+      border-radius: 4px;
+      transition: background-color ease 0.1s;
+
+      &:hover {
+        background-color: rgba(255, 255, 255, 0.05);
+      }
+
+      small {
+        font-weight: bold;
+        font-size: 11px;
+        text-transform: uppercase;
+      }
+    }
+  }
+
   &__bottom-buttons {
     display: flex;
     flex-direction: column;

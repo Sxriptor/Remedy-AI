@@ -16,6 +16,8 @@
     "downloads": "Downloads",
     "settings": "Settings",
     "my_library": "My library",
+    "applications": "Applications",
+    "extensions_plugins": "Extensions / Plugins",
     "downloading_metadata": "{{title}} (Downloading metadata…)",
     "paused": "{{title}} (Paused)",
     "downloading": "{{title}} ({{percentage}} - Downloading…)",
@@ -400,7 +402,9 @@
     "resume_seeding": "Resume seeding",
     "options": "Manage",
     "extract": "Extract files",
-    "extracting": "Extracting files…"
+    "extracting": "Extracting files…",
+    "applications": "Applications",
+    "extensions_plugins": "Extensions / Plugins"
   },
   "settings": {
     "downloads_path": "Downloads path",

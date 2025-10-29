@@ -1,5 +1,5 @@
 import { registerEvent } from "../register-event";
-import { gamesSublevel, levelKeys } from "@main/level";
+import { gamesSublevel, gamesShopAssetsSublevel, levelKeys } from "@main/level";
 import path from "node:path";
 import fs from "node:fs";
 import { SystemPath } from "@main/services/system-path";
@@ -11,19 +11,233 @@ interface DetectedApp {
   executablePath: string;
 }
 
+// Temporarily disabled icon extraction to speed up scanning
+// Icon extraction was causing the scan to hang
+// TODO: Re-implement icon extraction in a background process
+/*
+const extractIconFromExecutable = async (
+  executablePath: string,
+  timeoutMs: number = 3000
+): Promise<string | null> => {
+  if (process.platform !== "win32") {
+    return null;
+  }
+
+  try {
+    const iconsDir = path.join(app.getPath("userData"), "app-icons");
+    await fs.promises.mkdir(iconsDir, { recursive: true });
+
+    const iconFileName = `${path.basename(executablePath, ".exe")}_${Date.now()}.png`;
+    const iconPath = path.join(iconsDir, iconFileName);
+
+    const psScript = `
+      Add-Type -AssemblyName System.Drawing
+      $icon = [System.Drawing.Icon]::ExtractAssociatedIcon('${executablePath.replace(/'/g, "''")}')
+      if ($icon) {
+        $bitmap = $icon.ToBitmap()
+        $bitmap.Save('${iconPath.replace(/'/g, "''")}', [System.Drawing.Imaging.ImageFormat]::Png)
+        $bitmap.Dispose()
+        $icon.Dispose()
+        Write-Output 'success'
+      }
+    `;
+
+    const extractionPromise = execAsync(`powershell -Command "${psScript.replace(/"/g, '\\"')}"`);
+    const timeoutPromise = new Promise<never>((_, reject) =>
+      setTimeout(() => reject(new Error("Icon extraction timeout")), timeoutMs)
+    );
+
+    await Promise.race([extractionPromise, timeoutPromise]);
+
+    if (fs.existsSync(iconPath)) {
+      const iconData = await fs.promises.readFile(iconPath);
+      const base64 = iconData.toString("base64");
+      return `data:image/png;base64,${base64}`;
+    }
+
+    return null;
+  } catch (error) {
+    return null;
+  }
+};
+*/
+
+const shouldIgnoreExecutable = (fileName: string, filePath: string): boolean => {
+  const lowerFileName = fileName.toLowerCase();
+  const lowerPath = filePath.toLowerCase();
+  
+  // Gaming-related applications to ignore
+  const gamingPatterns = [
+    "steam",
+    "battleye",
+    "eac", // Easy Anti-Cheat
+    "anticheat",
+    "epic", // Epic Games
+    "origin", // EA Origin
+    "uplay",
+    "riot", // Riot Games
+    "blizzard",
+    "gog", // GOG Galaxy
+    "battlenet",
+    "launcher", // Game launchers
+    "xbox",
+    "playnite",
+  ];
+  
+  // Hardware utilities to ignore
+  const hardwarePatterns = [
+    "corsair",
+    "icue",
+    "logitech",
+    "lghub",
+    "ghub",
+    "razer",
+    "synapse",
+    "msi",
+    "afterburner",
+    "asus",
+    "aura",
+    "armoury",
+    "nvidia",
+    "geforce",
+    "amd",
+    "radeon",
+    "rtss", // RivaTuner
+    "hwmonitor",
+    "cpuz",
+    "gpuz",
+  ];
+  
+  // System utilities and maintenance to ignore
+  const systemPatterns = [
+    "uninstall",
+    "unins000",
+    "uninst",
+    "install",
+    "setup",
+    "installer",
+    "update",
+    "updater",
+    "autoupdate",
+    "selfupdate",
+    "crashreporter",
+    "crash_reporter",
+    "errorreport",
+    "bugreport",
+    "dumprenderer",
+    "temp",
+    "tmp",
+    "cache",
+    "vcredist",
+    "redist",
+    "dotnet",
+    "directx",
+    "dxsetup",
+    "oalinst",
+    "bootstrap",
+    "stub",
+    "repair",
+    "cleanup",
+    "cleaner",
+    "unlocker",
+    "register",
+    "activate",
+    "license",
+  ];
+  
+  // Combine all ignore patterns
+  const allIgnorePatterns = [
+    ...gamingPatterns,
+    ...hardwarePatterns,
+    ...systemPatterns,
+  ];
+  
+  // Check if filename or path contains any ignore patterns
+  const shouldIgnore = allIgnorePatterns.some(
+    (pattern) => lowerFileName.includes(pattern) || lowerPath.includes(pattern)
+  );
+  
+  // Ignore executables in specific directories
+  const ignoreDirs = [
+    "\\uninstall\\",
+    "\\temp\\",
+    "\\tmp\\",
+    "\\cache\\",
+    "\\steamapps\\",
+    "\\steam\\",
+    "/uninstall/",
+    "/temp/",
+    "/tmp/",
+    "/cache/",
+    "/steam/",
+  ];
+  
+  const shouldIgnoreByPath = ignoreDirs.some((dir) => lowerPath.includes(dir));
+  
+  return shouldIgnore || shouldIgnoreByPath;
+};
+
+const isProductivityApp = (fileName: string, filePath: string): boolean => {
+  const lowerFileName = fileName.toLowerCase();
+  const lowerPath = filePath.toLowerCase();
+  
+  // Productivity & Development Tools
+  const productivityPatterns = [
+    // Code Editors & IDEs
+    "code", "vscode", "cursor", "sublime", "atom", "notepad++",
+    "visual studio", "jetbrains", "pycharm", "webstorm", "intellij",
+    "rider", "phpstorm", "goland", "clion", "rubymine",
+    
+    // Communication
+    "discord", "slack", "teams", "zoom", "skype", "teamspeak",
+    "telegram", "whatsapp", "signal",
+    
+    // Browsers
+    "chrome", "firefox", "edge", "brave", "opera",
+    
+    // Email Clients
+    "outlook", "thunderbird", "mailbird", "postbox",
+    
+    // Office & Productivity
+    "word", "excel", "powerpoint", "onenote", "notion",
+    "evernote", "obsidian", "joplin", "typora",
+    
+    // AI Tools
+    "chatgpt", "copilot", "claude", "openai",
+    
+    // Development Tools
+    "git", "docker", "node", "python", "java", "mysql",
+    "postgres", "mongodb", "redis", "postman", "insomnia",
+    "terminal", "powershell", "cmd", "wsl",
+    
+    // Design Tools
+    "figma", "photoshop", "illustrator", "gimp", "inkscape",
+    "blender", "unity", "unreal",
+    
+    // Utilities
+    "7zip", "winrar", "vlc", "spotify", "obs",
+    "greenshot", "sharex", "lightshot",
+  ];
+  
+  return productivityPatterns.some(
+    (pattern) => lowerFileName.includes(pattern) || lowerPath.includes(pattern)
+  );
+};
+
 const getWindowsInstalledApps = async (): Promise<DetectedApp[]> => {
   const apps: DetectedApp[] = [];
 
   const commonPaths = [
-    path.join(SystemPath.getPath("programFiles")),
-    path.join(SystemPath.getPath("programFiles(x86)")),
+    process.env.ProgramFiles || "C:\\Program Files",
+    process.env["ProgramFiles(x86)"] || "C:\\Program Files (x86)",
     path.join(SystemPath.getPath("home"), "AppData", "Local", "Programs"),
   ];
 
   const scanDirectory = (dir: string, depth = 0): string[] => {
     const executables: string[] = [];
 
-    if (depth > 3) return executables;
+    // Only scan 2 levels deep to avoid finding too many files
+    if (depth > 2) return executables;
 
     try {
       if (!fs.existsSync(dir)) return executables;
@@ -60,15 +274,21 @@ const getWindowsInstalledApps = async (): Promise<DetectedApp[]> => {
     const exeFiles = scanDirectory(basePath);
 
     for (const exePath of exeFiles) {
+      // Limit total apps to prevent overwhelming the system
+      if (apps.length >= 500) {
+        console.log("Reached maximum app limit (500), stopping scan");
+        break;
+      }
+
       const appName = path.basename(exePath, ".exe");
 
-      // Skip system and temporary files
-      if (
-        appName.toLowerCase().includes("uninstall") ||
-        appName.toLowerCase().includes("setup") ||
-        appName.toLowerCase().includes("temp") ||
-        appName.toLowerCase().includes("tmp")
-      ) {
+      // Skip executables in the ignore list
+      if (shouldIgnoreExecutable(appName, exePath)) {
+        continue;
+      }
+
+      // Only include productivity-related apps
+      if (!isProductivityApp(appName, exePath)) {
         continue;
       }
 
@@ -77,6 +297,9 @@ const getWindowsInstalledApps = async (): Promise<DetectedApp[]> => {
         executablePath: exePath,
       });
     }
+    
+    // Break outer loop if limit reached
+    if (apps.length >= 500) break;
   }
 
   return apps;
@@ -106,6 +329,16 @@ const getLinuxInstalledApps = async (): Promise<DetectedApp[]> => {
 
           // Check if it's an executable file
           if (stat.isFile() && (stat.mode & 0o111) !== 0) {
+            // Skip executables in the ignore list
+            if (shouldIgnoreExecutable(file, fullPath)) {
+              continue;
+            }
+
+            // Only include productivity-related apps
+            if (!isProductivityApp(file, fullPath)) {
+              continue;
+            }
+
             apps.push({
               name: file,
               executablePath: fullPath,
@@ -125,6 +358,8 @@ const getLinuxInstalledApps = async (): Promise<DetectedApp[]> => {
 
 const scanInstalledApps = async () => {
   try {
+    console.log("Starting app scan...");
+    
     const detectedApps =
       process.platform === "win32"
         ? await getWindowsInstalledApps()
@@ -132,18 +367,24 @@ const scanInstalledApps = async () => {
           ? await getLinuxInstalledApps()
           : [];
 
+    console.log(`Found ${detectedApps.length} potential apps`);
+
+    // Build a Set of existing executable paths for faster lookup
+    const existingGames = await gamesSublevel.iterator().all();
+    const existingPaths = new Set(
+      existingGames
+        .filter(([_key, game]) => !game.isDeleted && game.executablePath)
+        .map(([_key, game]) => game.executablePath?.toLowerCase())
+    );
+
+    console.log(`Existing apps in library: ${existingPaths.size}`);
+
     const addedApps: Array<{ name: string; executablePath: string }> = [];
 
     for (const app of detectedApps) {
       try {
-        // Check if app with this executable path already exists
-        const existingGames = await gamesSublevel.iterator().all();
-        const appExists = existingGames.some(
-          ([_key, game]) =>
-            game.executablePath === app.executablePath && !game.isDeleted
-        );
-
-        if (appExists) {
+        // Check if app with this executable path already exists (fast lookup)
+        if (existingPaths.has(app.executablePath.toLowerCase())) {
           continue;
         }
 
@@ -151,9 +392,13 @@ const scanInstalledApps = async () => {
         const shop: GameShop = "custom";
         const gameKey = levelKeys.game(shop, objectId);
 
+        // Skip icon extraction for now to speed up scanning
+        // Icons can be extracted later if needed
+        const iconUrl = null;
+
         const game = {
           title: app.name,
-          iconUrl: null,
+          iconUrl: iconUrl,
           logoImageUrl: null,
           libraryHeroImageUrl: null,
           objectId,
@@ -169,13 +414,32 @@ const scanInstalledApps = async () => {
           hasManuallyUpdatedPlaytime: false,
         };
 
+        // Store game assets
+        const assets = {
+          updatedAt: Date.now(),
+          objectId,
+          shop,
+          title: app.name,
+          iconUrl: iconUrl || null,
+          libraryHeroImageUrl: "",
+          libraryImageUrl: iconUrl || "",
+          logoImageUrl: "",
+          logoPosition: null,
+          coverImageUrl: iconUrl || "",
+        };
+        await gamesShopAssetsSublevel.put(gameKey, assets);
+
         await gamesSublevel.put(gameKey, game);
         addedApps.push(app);
+        
+        console.log(`Added app: ${app.name}`);
       } catch (error) {
         console.error(`Error adding app ${app.name}:`, error);
         continue;
       }
     }
+
+    console.log(`Scan complete. Added ${addedApps.length} new apps`);
 
     return {
       success: true,

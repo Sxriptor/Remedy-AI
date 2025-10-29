@@ -8,7 +8,7 @@ import {
   SettingsContextProvider,
 } from "@renderer/context";
 import { SettingsAccount } from "./settings-account";
-import { useUserDetails, useToast } from "@renderer/hooks";
+import { useUserDetails, useToast, useLibrary } from "@renderer/hooks";
 import { useMemo, useState, useCallback } from "react";
 import "./settings.scss";
 import { SettingsAppearance } from "./aparence/settings-appearance";
@@ -19,6 +19,7 @@ export default function Settings() {
 
   const { userDetails } = useUserDetails();
   const { showSuccessToast } = useToast();
+  const { updateLibrary } = useLibrary();
   const [isScanning, setIsScanning] = useState(false);
 
   const handleScan = useCallback(async () => {
@@ -28,6 +29,8 @@ export default function Settings() {
       const result = await window.electron.scanInstalledApps();
 
       if (result.success && result.addedCount > 0) {
+        // Refresh the library to show newly added apps
+        await updateLibrary();
         showSuccessToast(t("scan_complete", { count: result.addedCount }));
       } else if (result.success) {
         showSuccessToast(t("scan_complete_no_apps"));
@@ -37,7 +40,7 @@ export default function Settings() {
     } finally {
       setIsScanning(false);
     }
-  }, [t, showSuccessToast]);
+  }, [t, showSuccessToast, updateLibrary]);
 
   const categories = useMemo(() => {
     const categories = [

@@ -245,6 +245,8 @@ contextBridge.exposeInMainWorld("electron", {
   createSteamShortcut: (shop: GameShop, objectId: string) =>
     ipcRenderer.invoke("createSteamShortcut", shop, objectId),
   scanInstalledApps: () => ipcRenderer.invoke("scanInstalledApps"),
+  extractExecutableIcon: (executablePath: string) =>
+    ipcRenderer.invoke("extractExecutableIcon", executablePath),
   onGamesRunning: (
     cb: (
       gamesRunning: Pick<GameRunning, "id" | "sessionDurationInMillis">[]
