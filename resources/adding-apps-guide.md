@@ -16,6 +16,7 @@ If the scanner isn't finding apps you have installed, they need to be added to `
    - Add the app name exactly as it appears in the folder
 
 Example:
+
 ```json
 "Photo_Editing": [
   "Adobe Photoshop",
@@ -30,6 +31,7 @@ Example:
 ## Common Installation Locations
 
 The scanner checks these directories:
+
 - `C:\Program Files\`
 - `C:\Program Files (x86)\`
 - `%USERPROFILE%\AppData\Local\Programs\`
@@ -40,10 +42,12 @@ The scanner checks these directories:
 ## Extensions vs Applications
 
 **Applications** (added to scan-filter.json):
+
 - Standalone programs you launch directly
 - Examples: VS Code, Chrome, Photoshop, Discord
 
 **Extensions** (NOT added to scan-filter.json):
+
 - Plugins or add-ons for other applications
 - Helper utilities that run in the background
 - Examples: Browser extensions, VS Code plugins, system tray utilities
@@ -51,15 +55,18 @@ The scanner checks these directories:
 ## Troubleshooting
 
 ### App not found even after adding to filter:
+
 1. Check the exact folder name matches what you added
 2. Make sure the app has a `.exe` file in its folder (within 3 levels deep)
 3. Check if it's being filtered out as a "helper" process
 4. Look at the console logs to see what was detected
 
 ### Too many helper processes being added:
+
 - These should be automatically filtered out
 - If one slips through, report it so we can add it to the ignore list
 
 ### Duplicate apps:
+
 - The scanner now prevents duplicates by app name
 - If you see duplicates, they might have different names (e.g., "Code" vs "Visual Studio Code")

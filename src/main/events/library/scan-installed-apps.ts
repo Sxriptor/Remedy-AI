@@ -44,7 +44,11 @@ const loadScanFilter = (): ScanFilter | null => {
       if (fs.existsSync(altPath)) {
         const filterData = fs.readFileSync(altPath, "utf-8");
         scanFilterCache = JSON.parse(filterData);
-        console.log("Loaded scan filter from alternative path with", Object.keys(scanFilterCache?.Applications || {}).length, "categories");
+        console.log(
+          "Loaded scan filter from alternative path with",
+          Object.keys(scanFilterCache?.Applications || {}).length,
+          "categories"
+        );
         return scanFilterCache;
       }
       return null;
@@ -52,7 +56,11 @@ const loadScanFilter = (): ScanFilter | null => {
 
     const filterData = fs.readFileSync(filterPath, "utf-8");
     scanFilterCache = JSON.parse(filterData);
-    console.log("Loaded scan filter with", Object.keys(scanFilterCache?.Applications || {}).length, "categories");
+    console.log(
+      "Loaded scan filter with",
+      Object.keys(scanFilterCache?.Applications || {}).length,
+      "categories"
+    );
     return scanFilterCache;
   } catch (error) {
     console.error("Error loading scan-filter.json:", error);
@@ -255,7 +263,7 @@ const shouldIgnoreExecutable = (
 
 const getAppCategory = (fileName: string, filePath: string): string | null => {
   const filter = loadScanFilter();
-  
+
   if (!filter) {
     return null;
   }
@@ -267,16 +275,16 @@ const getAppCategory = (fileName: string, filePath: string): string | null => {
   for (const [categoryName, apps] of Object.entries(filter.Applications)) {
     for (const appName of apps) {
       const lowerAppName = appName.toLowerCase();
-      
+
       if (lowerPath.includes(lowerAppName)) {
         return categoryName;
       }
-      
+
       const appNameWords = lowerAppName.split(/\s+/);
-      const matchesAppName = appNameWords.some((word) => 
-        lowerFileName.includes(word) && word.length > 3
+      const matchesAppName = appNameWords.some(
+        (word) => lowerFileName.includes(word) && word.length > 3
       );
-      
+
       if (matchesAppName) {
         return categoryName;
       }
@@ -288,7 +296,7 @@ const getAppCategory = (fileName: string, filePath: string): string | null => {
 
 const isProductivityApp = (fileName: string, filePath: string): boolean => {
   const filter = loadScanFilter();
-  
+
   if (!filter) {
     console.warn("No scan filter loaded, rejecting app");
     return false;
@@ -306,7 +314,7 @@ const isProductivityApp = (fileName: string, filePath: string): boolean => {
   // Check if any allowed app name matches the path or folder
   for (const appName of allAllowedApps) {
     const lowerAppName = appName.toLowerCase();
-    
+
     // Check if the app name is in the path (folder structure)
     if (lowerPath.includes(lowerAppName)) {
       // Make sure it's not a helper process or system utility
@@ -341,23 +349,23 @@ const isProductivityApp = (fileName: string, filePath: string): boolean => {
         "wslsettings",
         " app.exe", // Catches "ollama app.exe" - space before app indicates it's not the main exe
       ];
-      
+
       const isHelper = helperPatterns.some((pattern) =>
         lowerFileName.includes(pattern)
       );
-      
+
       if (!isHelper) {
         return true;
       }
     }
-    
+
     // Check if the filename contains the app name
     // This helps catch executables like "Discord.exe", "Slack.exe", etc.
     const appNameWords = lowerAppName.split(/\s+/);
-    const matchesAppName = appNameWords.some((word) => 
-      lowerFileName.includes(word) && word.length > 3 // Avoid short words like "pro", "one"
+    const matchesAppName = appNameWords.some(
+      (word) => lowerFileName.includes(word) && word.length > 3 // Avoid short words like "pro", "one"
     );
-    
+
     if (matchesAppName) {
       return true;
     }
@@ -412,7 +420,7 @@ const getWindowsInstalledApps = async (): Promise<DetectedApp[]> => {
               "temp",
               "logs",
             ];
-            
+
             if (!skipDirs.includes(lowerDirName)) {
               executables.push(...scanDirectory(fullPath, depth + 1, maxDepth));
             }
@@ -549,7 +557,11 @@ const scanInstalledApps = async () => {
 
     console.log(`Existing apps in library: ${existingPaths.size}`);
 
-    const addedApps: Array<{ name: string; executablePath: string; category: string }> = [];
+    const addedApps: Array<{
+      name: string;
+      executablePath: string;
+      category: string;
+    }> = [];
     const seenAppNames = new Set<string>(); // Track app names to avoid duplicates
 
     for (const app of detectedApps) {
@@ -618,7 +630,11 @@ const scanInstalledApps = async () => {
         await gamesShopAssetsSublevel.put(gameKey, assets);
 
         await gamesSublevel.put(gameKey, game);
-        addedApps.push({ name: app.name, executablePath: app.executablePath, category });
+        addedApps.push({
+          name: app.name,
+          executablePath: app.executablePath,
+          category,
+        });
 
         console.log(`Added app: ${app.name} (${category})`);
       } catch (error) {
@@ -639,18 +655,21 @@ const scanInstalledApps = async () => {
     console.log(`Added ${addedApps.length} new apps\n`);
 
     // Group by category for summary
-    const byCategory = addedApps.reduce((acc, app) => {
-      if (!acc[app.category]) {
-        acc[app.category] = [];
-      }
-      acc[app.category].push(app.name);
-      return acc;
-    }, {} as Record<string, string[]>);
+    const byCategory = addedApps.reduce(
+      (acc, app) => {
+        if (!acc[app.category]) {
+          acc[app.category] = [];
+        }
+        acc[app.category].push(app.name);
+        return acc;
+      },
+      {} as Record<string, string[]>
+    );
 
     // Print summary by category
     for (const [category, apps] of Object.entries(byCategory).sort()) {
       console.log(`${category} (${apps.length}):`);
-      apps.forEach(app => console.log(`  - ${app}`));
+      apps.forEach((app) => console.log(`  - ${app}`));
       console.log("");
     }
 

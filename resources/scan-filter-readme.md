@@ -1,11 +1,13 @@
 # Scan Filter Configuration
 
 ## Overview
+
 The `scan-filter.json` file controls which applications are detected during the system scan. This allows for easy maintenance and updates without modifying code.
 
 ## How It Works
 
 ### Application Matching
+
 The scanner checks if an executable matches any app in the filter by:
 
 1. **Path matching** - Checks if the app name appears in the installation path
@@ -21,7 +23,9 @@ The scanner checks if an executable matches any app in the filter by:
    - `*monitor.exe`, `*crashreporter.exe`
 
 ### Ignored Applications
+
 Applications are ignored if they match patterns in the code's ignore lists:
+
 - Gaming platforms (Steam, Epic, Origin, etc.)
 - Hardware utilities (Corsair, Logitech, Razer, etc.)
 - System utilities (installers, updaters, uninstallers)
@@ -35,6 +39,7 @@ To add a new application to the scan filter:
 3. Add the application name to the array
 
 Example:
+
 ```json
 "Coding_IDEs": [
   "Visual Studio Code",
