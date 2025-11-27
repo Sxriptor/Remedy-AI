@@ -2,6 +2,7 @@
   "Applications": {
     "Coding_IDEs": [
       "Visual Studio Code",
+      "Code",
       "Visual Studio",
       "IntelliJ IDEA",
       "PyCharm",

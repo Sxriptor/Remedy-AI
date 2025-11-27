@@ -20,7 +20,7 @@ interface ScanFilter {
 
 let scanFilterCache: ScanFilter | null = null;
 
-const loadScanFilter = (): ScanFilter | null => {
+export const loadScanFilter = (): ScanFilter | null => {
   if (scanFilterCache) {
     return scanFilterCache;
   }
@@ -547,15 +547,22 @@ const scanInstalledApps = async () => {
 
     console.log(`Found ${detectedApps.length} potential apps`);
 
-    // Build a Set of existing executable paths for faster lookup
+    // Build Sets of existing executable paths and titles for faster lookup
     const existingGames = await gamesSublevel.iterator().all();
     const existingPaths = new Set(
       existingGames
         .filter(([_key, game]) => !game.isDeleted && game.executablePath)
         .map(([_key, game]) => game.executablePath?.toLowerCase())
     );
+    
+    // Also check for existing app titles to prevent duplicates
+    const existingTitles = new Set(
+      existingGames
+        .filter(([_key, game]) => !game.isDeleted && game.title)
+        .map(([_key, game]) => game.title.toLowerCase().trim())
+    );
 
-    console.log(`Existing apps in library: ${existingPaths.size}`);
+    console.log(`Existing apps in library: ${existingPaths.size} paths, ${existingTitles.size} titles`);
 
     const addedApps: Array<{
       name: string;
@@ -568,13 +575,20 @@ const scanInstalledApps = async () => {
       try {
         // Check if app with this executable path already exists (fast lookup)
         if (existingPaths.has(app.executablePath.toLowerCase())) {
+          console.log(`Skipping app (existing path): ${app.name}`);
           continue;
         }
 
-        // Check if we've already added an app with this name
+        // Check if an app with this title already exists in the library
         const normalizedName = app.name.toLowerCase().trim();
+        if (existingTitles.has(normalizedName)) {
+          console.log(`Skipping duplicate app (existing title): ${app.name}`);
+          continue;
+        }
+
+        // Check if we've already added an app with this name during this scan
         if (seenAppNames.has(normalizedName)) {
-          console.log(`Skipping duplicate app: ${app.name}`);
+          console.log(`Skipping duplicate app (already added this scan): ${app.name}`);
           continue;
         }
 

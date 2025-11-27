@@ -211,6 +211,15 @@ declare global {
       addedCount: number;
       error?: string;
     }>;
+    getScanFilter: () => Promise<{
+      Applications: {
+        [category: string]: string[];
+      };
+      Extensions_and_Plugins?: {
+        Note?: string;
+        Items?: string[];
+      };
+    } | null>;
     extractExecutableIcon: (executablePath: string) => Promise<string | null>;
 
     /* Download sources */

@@ -81,6 +81,12 @@ export function Sidebar() {
   const [showPlayableOnly, setShowPlayableOnly] = useState(false);
   const [showAddGameModal, setShowAddGameModal] = useState(false);
   const [extensionsCollapsed, setExtensionsCollapsed] = useState(true);
+  const [scanFilter, setScanFilter] = useState<{
+    Applications: { [category: string]: string[] };
+  } | null>(null);
+  const [categoryCollapsed, setCategoryCollapsed] = useState<{
+    [category: string]: boolean;
+  }>({});
 
   const handlePlayButtonClick = () => {
     setShowPlayableOnly(!showPlayableOnly);
@@ -154,6 +160,26 @@ export function Sidebar() {
 
   useEffect(() => {
     loadDeckyPluginInfo();
+  }, []);
+
+  useEffect(() => {
+    const loadScanFilter = async () => {
+      try {
+        const filter = await window.electron.getScanFilter();
+        if (filter) {
+          setScanFilter(filter);
+          // Initialize all categories as collapsed (false = open, true = collapsed)
+          const initialCollapsed: { [category: string]: boolean } = {};
+          Object.keys(filter.Applications || {}).forEach((category) => {
+            initialCollapsed[category] = false; // Start with sections open
+          });
+          setCategoryCollapsed(initialCollapsed);
+        }
+      } catch (error) {
+        console.error("Failed to load scan filter:", error);
+      }
+    };
+    loadScanFilter();
   }, []);
 
   useEffect(() => {
@@ -329,7 +355,7 @@ export function Sidebar() {
     return sortedLibrary.filter((game) => game.favorite);
   }, [sortedLibrary]);
 
-  const { applications, extensions } = useMemo(() => {
+  const { applications, extensions, applicationsByCategory } = useMemo(() => {
     const apps = filteredLibrary
       .filter((game) => !game.favorite)
       .filter((game) => !showPlayableOnly || isGamePlayable(game))
@@ -340,8 +366,33 @@ export function Sidebar() {
       .filter((game) => !showPlayableOnly || isGamePlayable(game))
       .filter((game) => isExtensionOrPlugin(game));
 
-    return { applications: apps, extensions: exts };
-  }, [filteredLibrary, showPlayableOnly]);
+    // Group applications by category
+    const appsByCategory: { [category: string]: LibraryGame[] } = {};
+    const uncategorized: LibraryGame[] = [];
+
+    apps.forEach((app) => {
+      const category = app.category;
+      if (category && scanFilter?.Applications?.[category]) {
+        if (!appsByCategory[category]) {
+          appsByCategory[category] = [];
+        }
+        appsByCategory[category].push(app);
+      } else {
+        uncategorized.push(app);
+      }
+    });
+
+    // Add uncategorized section if there are uncategorized apps
+    if (uncategorized.length > 0) {
+      appsByCategory["Other"] = uncategorized;
+    }
+
+    return {
+      applications: apps,
+      extensions: exts,
+      applicationsByCategory: appsByCategory,
+    };
+  }, [filteredLibrary, showPlayableOnly, scanFilter]);
 
   return (
     <aside
@@ -463,22 +514,88 @@ export function Sidebar() {
               theme="dark"
             />
 
-            {/* Applications Section */}
+            {/* Applications Section - Grouped by Category */}
             {applications.length > 0 && (
               <div className="sidebar__subsection">
                 <small className="sidebar__subsection-title">
                   {t("applications")} ({applications.length})
                 </small>
-                <ul className="sidebar__menu">
-                  {applications.map((game) => (
-                    <SidebarGameItem
-                      key={game.id}
-                      game={game}
-                      handleSidebarGameClick={handleSidebarGameClick}
-                      getGameTitle={getGameTitle}
-                    />
-                  ))}
-                </ul>
+                {Object.keys(applicationsByCategory).length > 0 ? (
+                  Object.entries(applicationsByCategory)
+                    .sort(([a], [b]) => {
+                      // Sort "Other" to the end
+                      if (a === "Other") return 1;
+                      if (b === "Other") return -1;
+                      return a.localeCompare(b);
+                    })
+                    .map(([category, categoryApps]) => {
+                      const isCollapsed = categoryCollapsed[category] ?? false;
+                      // Format category name: "Coding_IDEs" -> "Coding IDEs"
+                      const categoryDisplayName = category
+                        .split("_")
+                        .map((word) => {
+                          // Preserve acronyms (all caps words)
+                          if (word === word.toUpperCase() && word.length > 1) {
+                            return word;
+                          }
+                          // Capitalize first letter, lowercase rest
+                          return (
+                            word.charAt(0).toUpperCase() +
+                            word.slice(1).toLowerCase()
+                          );
+                        })
+                        .join(" ");
+
+                      return (
+                        <div key={category} className="sidebar__subsection">
+                          <button
+                            type="button"
+                            className="sidebar__subsection-title sidebar__subsection-title--collapsible"
+                            onClick={() =>
+                              setCategoryCollapsed((prev) => ({
+                                ...prev,
+                                [category]: !prev[category],
+                              }))
+                            }
+                          >
+                            {isCollapsed ? (
+                              <ChevronRightIcon size={12} />
+                            ) : (
+                              <ChevronDownIcon size={12} />
+                            )}
+                            <small>
+                              {categoryDisplayName} ({categoryApps.length})
+                            </small>
+                          </button>
+                          {!isCollapsed && (
+                            <ul className="sidebar__menu">
+                              {categoryApps.map((game) => (
+                                <SidebarGameItem
+                                  key={game.id}
+                                  game={game}
+                                  handleSidebarGameClick={
+                                    handleSidebarGameClick
+                                  }
+                                  getGameTitle={getGameTitle}
+                                />
+                              ))}
+                            </ul>
+                          )}
+                        </div>
+                      );
+                    })
+                ) : (
+                  <ul className="sidebar__menu">
+                    {applications.map((game) => (
+                      <SidebarGameItem
+                        key={game.id}
+                        game={game}
+                        handleSidebarGameClick={handleSidebarGameClick}
+                        getGameTitle={getGameTitle}
+                      />
+                    ))}
+                  </ul>
+                )}
               </div>
             )}
 
