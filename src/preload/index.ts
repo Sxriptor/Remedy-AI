@@ -244,6 +244,10 @@ contextBridge.exposeInMainWorld("electron", {
     ipcRenderer.invoke("getDefaultWinePrefixSelectionPath"),
   createSteamShortcut: (shop: GameShop, objectId: string) =>
     ipcRenderer.invoke("createSteamShortcut", shop, objectId),
+  scanInstalledApps: () => ipcRenderer.invoke("scanInstalledApps"),
+  getScanFilter: () => ipcRenderer.invoke("getScanFilter"),
+  extractExecutableIcon: (executablePath: string) =>
+    ipcRenderer.invoke("extractExecutableIcon", executablePath),
   onGamesRunning: (
     cb: (
       gamesRunning: Pick<GameRunning, "id" | "sessionDurationInMillis">[]

@@ -16,6 +16,8 @@
     "downloads": "Downloads",
     "settings": "Settings",
     "my_library": "My library",
+    "applications": "Applications",
+    "extensions_plugins": "Extensions / Plugins",
     "downloading_metadata": "{{title}} (Downloading metadata…)",
     "paused": "{{title}} (Paused)",
     "downloading": "{{title}} ({{percentage}} - Downloading…)",
@@ -400,7 +402,9 @@
     "resume_seeding": "Resume seeding",
     "options": "Manage",
     "extract": "Extract files",
-    "extracting": "Extracting files…"
+    "extracting": "Extracting files…",
+    "applications": "Applications",
+    "extensions_plugins": "Extensions / Plugins"
   },
   "settings": {
     "downloads_path": "Downloads path",
@@ -473,6 +477,10 @@
     "manage_subscription": "Manage subscription",
     "update_email": "Update email",
     "update_password": "Update password",
+    "scan": "Scan",
+    "scanning": "Scanning...",
+    "scan_complete": "Scan complete! Added {{count}} new app(s) to your library",
+    "scan_complete_no_apps": "Scan complete! No new apps found.",
     "current_email": "Current email:",
     "no_email_account": "You have not set an email yet",
     "account_data_updated_successfully": "Account data updated successfully",

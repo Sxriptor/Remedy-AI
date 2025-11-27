@@ -67,6 +67,7 @@ export interface Game {
   pinnedDate?: Date | null;
   automaticCloudSync?: boolean;
   hasManuallyUpdatedPlaytime?: boolean;
+  category?: string | null;
 }
 
 export interface Download {

@@ -7,6 +7,7 @@ extraResources:
   - seeds
   - from: node_modules/create-desktop-shortcuts/src/windows.vbs
   - from: resources/achievement.wav
+  - from: resources/scan-filter.json
 files:
   - "!**/.vscode/*"
   - "!src/*"
