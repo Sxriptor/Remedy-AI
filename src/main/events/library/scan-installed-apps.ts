@@ -554,7 +554,7 @@ const scanInstalledApps = async () => {
         .filter(([_key, game]) => !game.isDeleted && game.executablePath)
         .map(([_key, game]) => game.executablePath?.toLowerCase())
     );
-    
+
     // Also check for existing app titles to prevent duplicates
     const existingTitles = new Set(
       existingGames
@@ -562,7 +562,9 @@ const scanInstalledApps = async () => {
         .map(([_key, game]) => game.title.toLowerCase().trim())
     );
 
-    console.log(`Existing apps in library: ${existingPaths.size} paths, ${existingTitles.size} titles`);
+    console.log(
+      `Existing apps in library: ${existingPaths.size} paths, ${existingTitles.size} titles`
+    );
 
     const addedApps: Array<{
       name: string;
@@ -588,7 +590,9 @@ const scanInstalledApps = async () => {
 
         // Check if we've already added an app with this name during this scan
         if (seenAppNames.has(normalizedName)) {
-          console.log(`Skipping duplicate app (already added this scan): ${app.name}`);
+          console.log(
+            `Skipping duplicate app (already added this scan): ${app.name}`
+          );
           continue;
         }
 

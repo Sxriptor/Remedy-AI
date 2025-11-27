@@ -6,4 +6,3 @@ const getScanFilter = async () => {
 };
 
 registerEvent("getScanFilter", getScanFilter);
-
